@@ -1,0 +1,4 @@
+# Shows the "Sponsor" button on the repository page.
+github: [OWNER]
+# Optional second channel; remove the # once the account exists:
+# ko_fi: OWNER

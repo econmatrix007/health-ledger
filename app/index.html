@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="A private daily log for weight, blood pressure, oxygen, medicines, fluids, food and exercise. Data stays on your devices." name="description"/><meta content="#00356B" name="theme-color"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="Health Ledger" name="apple-mobile-web-app-title"/><meta content="default" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="icons/icon-192.png" rel="icon" type="image/png"/><link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/><title>Daily Health Ledger</title><style id="fontFaces">
+@font-face{font-family:"Goldman";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/goldman-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Goldman";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/goldman-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/source-serif-4-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Serif 4";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2")}
+</style>
+<style>
+:root{
+  --paper:#FAF7F0; --card:#FFFDF8; --ink:#1B1B1B; --ink2:#4A4740; --muted:#7A766C;
+  --rule:#E3DDCF; --yale:#00356B; --yale2:#1F5A9E; --yale-tint:#E8EEF6;
+  --s1:#2a78d6; --s2:#eb6834; --goal:#7A766C;
+  --good:#2E7D32; --warn:#B26A00; --crit:#A4161A;
+  --good-bg:#EAF4EA; --warn-bg:#FFF4E0; --crit-bg:#FBE9E9;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --display:"Goldman", "Source Serif 4", Georgia, serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.45}
+header.top{position:sticky;top:0;z-index:20;background:var(--yale);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.top-inner{max-width:1200px;margin:0 auto;padding:10px 18px 0;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.brand{font-family:var(--display);font-size:22px;letter-spacing:.5px}
+.brand small{display:block;font-family:var(--serif);font-size:12px;opacity:.8;letter-spacing:0}
+.datebox{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:14px}
+.datebox input{font:inherit;padding:4px 6px;border-radius:4px;border:0}
+.datebox button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:3px 9px;cursor:pointer;font:inherit}
+nav.tabs{width:100%;display:flex;gap:2px;overflow-x:auto}
+nav.tabs button{background:transparent;color:#d9e3f0;border:0;border-bottom:3px solid transparent;padding:9px 13px;font:600 14px var(--serif);cursor:pointer;white-space:nowrap}
+nav.tabs button.active{color:#fff;border-bottom-color:#E8C46A}
+main{max-width:1200px;margin:0 auto;padding:20px 18px 60px}
+section.tab{display:none} section.tab.active{display:block}
+h2{font-family:var(--display);color:var(--yale);font-weight:400;font-size:24px;margin:4px 0 12px}
+h3{color:var(--yale);font-size:18px;margin:0 0 8px}
+.lede{color:var(--ink2);margin:-4px 0 16px;max-width:820px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
+.tile .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tile .val{font-family:var(--display);font-size:30px;color:var(--ink);line-height:1.15;margin:4px 0 2px}
+.tile .sub{font-size:13px;color:var(--ink2)}
+.bar{height:8px;background:var(--rule);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--yale2);border-radius:4px}
+.bar.over>i{background:var(--crit)}
+label{display:block;font-size:13px;color:var(--ink2);margin:6px 0 2px}
+input,select,textarea{font:15px var(--serif);padding:6px 8px;border:1px solid #CFC8B8;border-radius:5px;background:#fff;color:var(--ink);width:100%}
+textarea{min-height:56px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:90px}
+.btn{background:var(--yale);color:#fff;border:0;border-radius:5px;padding:8px 14px;font:600 14px var(--serif);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--yale);border:1px solid var(--yale)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.danger{background:var(--crit)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{font-family:var(--serif);background:var(--yale-tint);color:var(--yale);border:1px solid #C9D6E8;border-radius:16px;padding:4px 11px;font-size:13px;cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.status{display:inline-flex;align-items:center;gap:5px;border-radius:4px;padding:2px 8px;font-size:13px;font-weight:600}
+.status.good{background:var(--good-bg);color:var(--good)}
+.status.warn{background:var(--warn-bg);color:var(--warn)}
+.status.crit{background:var(--crit-bg);color:var(--crit)}
+.alerts .status{margin:3px 6px 3px 0}
+.medrow{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--rule)}
+.medrow input[type=checkbox]{width:22px;height:22px;flex:none}
+.medrow .nm{flex:1}
+.medrow .nm b{display:block}
+.medrow .nm span{font-size:13px;color:var(--muted)}
+.medrow .tm{font-size:13px;color:var(--ink2);width:150px;text-align:right}
+.medrow.done .nm b{color:var(--good)}
+.note{font-size:13px;color:var(--ink2);background:var(--yale-tint);border-left:3px solid var(--yale);padding:8px 10px;border-radius:4px;margin:10px 0}
+.warnbox{font-size:14px;background:var(--warn-bg);border-left:3px solid var(--warn);padding:8px 10px;border-radius:4px;margin:10px 0}
+.critbox{font-size:14px;background:var(--crit-bg);border-left:3px solid var(--crit);padding:8px 10px;border-radius:4px;margin:10px 0}
+.seg{flex:none;display:inline-flex;border:1px solid var(--yale);border-radius:5px;overflow:hidden}
+.seg button{background:#fff;color:var(--yale);border:0;padding:5px 12px;font:600 13px var(--serif);cursor:pointer}
+.seg button.on{background:var(--yale);color:#fff}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--rule);box-shadow:0 2px 8px rgba(0,0,0,.12);border-radius:5px;padding:6px 9px;font-size:13px;display:none;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--ink2);margin:2px 0 4px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.guide details{background:var(--card);border:1px solid var(--rule);border-radius:8px;margin-bottom:10px}
+.guide summary{cursor:pointer;padding:12px 16px;font-weight:600;color:var(--yale);font-size:17px}
+.guide summary span{font-weight:400;color:var(--muted);font-size:14px}
+.guide .body{padding:0 16px 14px}
+.guide h4{margin:12px 0 4px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)}
+.guide ul{margin:4px 0 4px 18px;padding:0}
+.tag{display:inline-block;font-size:11px;background:var(--rule);color:var(--ink2);border-radius:3px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.timer{font-family:var(--display);font-size:28px;color:var(--yale)}
+.muted{color:var(--muted)} .small{font-size:13px}
+.right{text-align:right}
+.listitem{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--rule);font-size:14px}
+.x{background:none;border:0;color:var(--crit);cursor:pointer;font-size:16px}
+.sr{position:absolute;left:-9999px}
+@media print{header.top,.noprint{display:none!important} section.tab{display:block!important;page-break-after:always} body{background:#fff}}
+
+.cb{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);margin:8px 0 2px}
+.cb input{width:18px;height:18px;flex:none}
+
+.row>.seg{flex:none}
+.xr td{font-size:13px}
+
+.rcp{border:1px solid var(--rule);border-radius:8px;padding:12px 14px;margin-bottom:10px;background:var(--card)}
+.rcp h4{margin:0 0 4px;color:var(--yale);font-size:17px}
+.nut{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.nut span{font-size:12px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:2px 7px}
+.nut span.na{border-color:#C9D6E8;background:var(--yale-tint);color:var(--yale);font-weight:600}
+.rcp details summary{cursor:pointer;font-size:13px;color:var(--yale)}
+.rcp pre{white-space:pre-wrap;font:14px var(--serif);margin:6px 0}
+
+.ncard{border:1px solid var(--rule);border-radius:8px;padding:10px 14px;margin-bottom:8px;background:var(--card)}
+.ncard .meta{font-size:12px;color:var(--muted)}
+.ncard p{margin:6px 0;white-space:pre-wrap}
+.ncard.resolved{opacity:.6}
+
+.art{border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin-bottom:12px;background:var(--card)}
+.art h4{margin:0 0 2px;font-size:17px;color:var(--yale)}
+.art .an{border-top:1px solid var(--rule);margin-top:10px;padding-top:8px}
+.art .an h5{margin:10px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)}
+
+
+.trip-btns{display:flex;gap:6px;flex-wrap:wrap}
+.trip-count{font-family:var(--display);font-size:34px;color:var(--yale);line-height:1}
+.trip-list{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.trip-list span{font-size:13px;background:var(--yale-tint);border:1px solid #C9D6E8;border-radius:14px;padding:2px 4px 2px 10px}
+.trip-list .x{font-size:14px;padding:0 4px}
+#outTable td,#outTable th{font-size:13px}
+
+
+/* sync badge */
+.sync{flex-shrink:0;font:600 12px var(--serif);padding:3px 9px;border-radius:999px;white-space:nowrap;border:1px solid rgba(255,255,255,.45);color:#fff;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.sync.ok{background:rgba(46,125,50,.85);border-color:transparent}
+.sync.pending{background:rgba(255,255,255,.15)}
+.sync.err{background:var(--crit);border-color:transparent}
+.sync.local{background:var(--warn);border-color:transparent}
+#offlineWarn{max-width:1200px;margin:12px auto 0;padding:10px 14px;background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit);border-radius:8px;font-size:15px}
+#cloudOverlay{position:fixed;inset:0;z-index:50;background:rgba(250,247,240,.82);display:none;align-items:center;justify-content:center;font:600 17px var(--serif);color:var(--yale)}
+@media print{.sync,#cloudOverlay{display:none!important}}
+
+.uiModal{position:fixed;inset:0;z-index:60;background:rgba(27,27,27,.35);display:flex;align-items:center;justify-content:center;padding:16px}
+.uiBox{background:var(--card);border:1px solid var(--rule);border-radius:10px;max-width:460px;width:100%;padding:18px 18px 14px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.uiMsg{margin:0 0 12px;white-space:pre-wrap}
+.uiIn,.uiTxt{width:100%;font:inherit;padding:6px 8px;border:1px solid var(--rule);border-radius:6px;margin-bottom:12px}
+.uiTxt{font:12px ui-monospace,Menlo,monospace}
+.uiBtns{display:flex;justify-content:flex-end;gap:8px}
+
+/* generalized build */
+.brand .owner{font-family:var(--serif);font-size:15px;opacity:.85}
+.foot{max-width:1200px;margin:24px auto 30px;padding:0 16px;border-top:1px solid var(--rule)}
+.foot a{color:var(--yale)}
+#medTable td,#medTable th{font-size:14px;vertical-align:middle}
+#medTable tr.muted td{color:var(--muted)}
+@media print{.foot{display:none}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="top-inner">
+<div class="brand">Daily Health Ledger<small>Weight · Medicines · BP · SpO₂ · Fluids · Exercise</small></div>
+<div class="datebox noprint">
+<button aria-label="Previous day" id="prevDay">‹</button>
+<input aria-label="Logging date" id="curDate" type="date"/>
+<button aria-label="Next day" id="nextDay">›</button>
+<button id="todayBtn">Today</button><span aria-live="polite" class="sync local" id="syncBadge" role="status">On this device</span>
+</div>
+<nav class="tabs noprint" id="tabs">
+<button class="active" data-tab="dash">Dashboard</button>
+<button data-tab="morning">Morning Check-in</button>
+<button data-tab="meds">Medicines</button>
+<button data-tab="food">Meals &amp; Fluids</button>
+<button data-tab="recipes">Go To Meals</button><button data-tab="exercise">Exercise</button>
+<button data-tab="guide">Medicine Guide</button>
+<button data-tab="notes">Notes</button><button data-tab="reading">Reading List</button><button data-tab="articles">Found Articles</button><button data-tab="data">Settings &amp; Data</button>
+</nav>
+</div>
+</header>
+<main>
+<!-- ============ DASHBOARD ============ -->
+<section class="tab active" id="tab-dash">
+<h2>Dashboard <span class="small muted" id="dashDateLbl"></span></h2>
+<div class="alerts" id="alerts"></div>
+<div class="grid g4" id="tiles" style="margin-top:10px"></div>
+<div class="card" style="margin-top:14px">
+<div class="row" style="justify-content:space-between;align-items:center">
+<h3 style="margin:0">Trends</h3>
+<div class="seg" id="rangeSeg">
+<button class="on" data-r="7">7 days</button><button data-r="30">30 days</button><button data-r="90">90 days</button>
+</div>
+</div>
+<div class="grid g2" style="margin-top:10px">
+<div><h3 class="small">Morning weight</h3><div class="chart" id="chWeight"></div></div>
+<div><h3 class="small">Blood pressure (final reading)</h3>
+<div class="legend"><span><i style="background:var(--s1)"></i>Systolic</span><span><i style="background:var(--s2)"></i>Diastolic</span></div>
+<div class="chart" id="chBP"></div></div>
+<div><h3 class="small">Pulse (bpm)</h3><div class="chart" id="chPulse"></div></div>
+<div><h3 class="small">Oxygen saturation SpO₂ (%)</h3><div class="chart" id="chSpo2"></div></div>
+<div><h3 class="small">Daily fluid intake (mL) vs limit</h3><div class="chart" id="chFluid"></div></div>
+<div><h3 class="small">Medicine adherence (% of doses taken)</h3><div class="chart" id="chAdh"></div></div><div><h3 class="small">Estimated urine output (mL) vs fluid intake</h3>
+<div class="legend"><span><i style="background:#1F5A9E"></i>By fluid balance</span><span><i style="background:#eb6834"></i>By trips</span><span><i style="background:#7A766C"></i>Fluid intake</span></div>
+<div class="chart" id="chOut"></div></div><div><h3 class="small">Sodium (mg) vs limit</h3><div class="chart" id="chNa"></div></div>
+<div><h3 class="small">Calories (kcal)</h3><div class="chart" id="chKcal"></div></div>
+<div><h3 class="small">Carbohydrates (g)</h3><div class="chart" id="chCarb"></div></div>
+<div><h3 class="small">Potassium from food (mg)</h3><div class="chart" id="chK"></div></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Exercise and your morning BP <span class="small muted">(last 90 days)</span></h3>
+<p class="small muted" style="margin-top:-4px">Exercise lowers blood pressure for hours afterward. These comparisons show how big that effect is for you, so you can read your trend fairly.</p>
+<div style="overflow-x:auto"><table id="exBpTable"></table></div>
+<p class="small muted" id="exBpNote"></p>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Morning vs later-day readings <span class="small muted">(last 30 days)</span></h3>
+<div style="overflow-x:auto"><table id="amPmTable"></table></div>
+<div id="xToday" style="margin-top:8px"></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Summary statistics</h3>
+<div style="overflow-x:auto"><table id="statTable"></table></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Weekly trend (Mon–Sun)</h3>
+<div style="overflow-x:auto"><table id="weekTable"></table></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Monthly trend</h3>
+<div style="overflow-x:auto"><table id="monthTable"></table></div>
+</div>
+<p class="small muted">Thresholds come from the Settings tab. They are common care-team defaults; replace them with the numbers your doctor or nurse practitioner gives you.</p>
+</section>
+<!-- ============ MORNING CHECK-IN ============ -->
+<section class="tab" id="tab-morning">
+<h2>Morning Check-in</h2>
+<p class="lede">A steady routine makes readings comparable from day to day. A common pattern: (1) weigh after rising and using the bathroom, (2) take morning medicines, (3) wait the interval your care team recommends (the ledger assumes 2 hours), then measure BP, pulse, and SpO₂, (4) if the first BP reads high, rest quietly and retake in 15–20 minutes.</p>
+<div class="grid g2">
+<div class="card">
+<h3>Step 1 · Weight</h3>
+<div class="row">
+<div><label for="wt">Weight (<span class="wunit">lb</span>)</label><input id="wt" step="0.1" type="number"/></div>
+<div><label for="wtTime">Time</label><input id="wtTime" type="time"/></div>
+<div style="flex:0"><button class="btn" id="saveWt">Save</button></div>
+</div>
+<div id="wtMsg"></div>
+</div>
+<div class="card">
+<h3>Step 2 · Morning medicines</h3>
+<p class="small">Check them off on the Medicines tab, or log the whole morning set at once:</p>
+<button class="btn" id="takeAllAM">I took all morning medicines now</button>
+<div class="small" id="amStatus" style="margin-top:8px"></div>
+</div>
+<div class="card">
+<h3>Step 3 · BP, pulse &amp; SpO₂ <span class="small muted" id="bpWindow"></span></h3>
+<div class="row">
+<div><label for="sys1">Systolic</label><input id="sys1" type="number"/></div>
+<div><label for="dia1">Diastolic</label><input id="dia1" type="number"/></div>
+<div><label for="pul1">Pulse</label><input id="pul1" type="number"/></div>
+<div><label for="bpt1">Time</label><input id="bpt1" type="time"/></div>
+</div>
+<div class="row">
+<div><label for="spo2">SpO₂ %</label><input id="spo2" type="number"/></div>
+<div><label for="arm">Arm / position</label><select id="arm"><option>Left, seated</option><option>Right, seated</option><option>Left, standing</option><option>Right, standing</option></select></div>
+<div style="flex:0"><button class="btn" id="saveBP1">Save</button></div>
+</div>
+<label class="cb"><input id="exBefore" type="checkbox"/> Exercised before this reading (any time since waking)</label>
+<div id="bp1Msg"></div>
+</div>
+<div class="card" id="recheckCard">
+<h3>Step 4 · Recheck (if first reading high)</h3>
+<div class="row" style="align-items:center">
+<div class="timer" id="timerDisp">15:00</div>
+<div style="flex:1 1 200px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn ghost sm" id="startTimer">Start 15-min timer</button> <button class="btn ghost sm" id="stopTimer">Reset</button></div>
+</div>
+<div class="row">
+<div><label for="sys2">Systolic</label><input id="sys2" type="number"/></div>
+<div><label for="dia2">Diastolic</label><input id="dia2" type="number"/></div>
+<div><label for="pul2">Pulse</label><input id="pul2" type="number"/></div>
+<div><label for="bpt2">Time</label><input id="bpt2" type="time"/></div>
+<div style="flex:0"><button class="btn" id="saveBP2">Save</button></div>
+</div>
+<div id="bp2Msg"></div>
+<p class="small muted">The dashboard uses the recheck as the day's final reading when one exists.</p>
+</div>
+<div class="card">
+<h3>How I feel today</h3>
+<div class="chips" id="symChips"></div>
+<label for="dayNotes">Notes</label><textarea id="dayNotes" placeholder="Swelling, sleep, dizziness, anything to tell the doctor"></textarea>
+<button class="btn sm" id="saveNotes" style="margin-top:6px">Save notes</button>
+</div>
+<div class="card" style="grid-column:1/-1">
+<h3>Other readings today <span class="small muted">(midday, evening, after exercise, or when you feel off)</span></h3>
+<div class="row">
+<div><label for="xTime">Time</label><input id="xTime" type="time"/></div>
+<div><label for="xCtx">Context</label><select id="xCtx"><option>Midday</option><option>Evening</option><option>Bedtime</option><option>After exercise</option><option>Feeling unwell</option><option>Other</option></select></div>
+<div><label for="xWt">Weight</label><input id="xWt" step="0.1" type="number"/></div>
+<div><label for="xSys">Systolic</label><input id="xSys" type="number"/></div>
+<div><label for="xDia">Diastolic</label><input id="xDia" type="number"/></div>
+<div><label for="xPul">Pulse</label><input id="xPul" type="number"/></div>
+<div><label for="xSpo2">SpO₂ %</label><input id="xSpo2" type="number"/></div>
+</div>
+<div class="row"><div style="flex:3"><label for="xNote">Note</label><input id="xNote" placeholder="what you were doing, symptoms"/></div><div style="flex:0"><button class="btn" id="addX">Add reading</button></div></div>
+<div style="overflow-x:auto;margin-top:8px"><table class="xr" id="xTable"></table></div>
+<p class="small muted">Fill in only what you measured. These readings trigger alerts but stay out of the trend lines, which use your controlled morning routine so day-to-day comparisons are fair. Weight later in the day normally runs 1 to 3 lb higher after food and drink.</p>
+</div>
+<div class="card" id="tripCard" style="grid-column:1/-1">
+<h3>Bathroom trips &amp; estimated urine output</h3>
+<div class="row" style="align-items:center">
+<div style="flex:0 0 auto;min-width:110px"><div class="trip-count" id="tripN">0</div><div class="small muted">trips today</div></div>
+<div style="flex:2 1 300px"><label>Log a trip (size is your rough guess)</label>
+<div class="trip-btns"><button class="btn ghost" data-sz="S">+ Small</button><button class="btn" data-sz="N">+ Normal</button><button class="btn ghost" data-sz="L">+ Large</button><button class="btn ghost sm" id="tripUndo">Undo last</button></div></div>
+<div style="flex:0 1 120px"><label for="tripTime">Time (optional)</label><input id="tripTime" type="time"/></div>
+<div style="flex:0 1 150px"><label for="tripMl">My normal trip (mL)</label><input id="tripMl" min="50" step="10" type="number"/></div>
+</div>
+<div class="trip-list" id="tripList"></div>
+<div style="overflow-x:auto"><table id="outTable"></table></div>
+<p class="small muted">Two independent estimates. <b>Trip count</b>: small = half, normal = 1, large = 1.5 times your normal trip. <b>Fluid balance</b>: the day's logged fluid intake minus the change in weight from that morning to the next morning (1 lb ≈ 454 mL), so it fills in after the next day's weigh-in. Food water and breath/sweat losses roughly cancel, so expect ±300 to 500 mL of error; fever, heavy sweating, or missed fluid entries widen it. When the two estimates agree, trust them more. To calibrate your normal trip, measure a few once with a kitchen measuring pitcher. Your care team's thresholds override anything here. On exercise days with before/after weights on the Exercise tab, measured sweat is subtracted from the balance estimate.</p>
+</div>
+</div>
+</section>
+<!-- ============ MEDICINES ============ -->
+<section class="tab" id="tab-meds">
+<h2>Medicines</h2>
+<p class="lede">Tap a box when you take a dose; the time stamps automatically. Add, change, or stop medicines on the Settings &amp; Data tab.</p>
+<div class="grid g2">
+<div class="card"><h3>Morning (after weigh-in)</h3><div id="medsAM"></div></div>
+<div class="card"><h3>Evening</h3><div id="medsPM"></div><div class="note" id="pmNote"></div></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Last 14 days</h3>
+<div style="overflow-x:auto"><table id="medGrid"></table></div>
+</div>
+</section>
+<!-- ============ MEALS & FLUIDS ============ -->
+<section class="tab" id="tab-food">
+<h2>Meals &amp; Fluids</h2>
+<div class="grid g2">
+<div class="card">
+<h3>Fluid intake</h3>
+<div class="tile"><div class="val" id="fluidTotal">0 mL</div><div class="sub" id="fluidSub"></div><div class="bar" id="fluidBar"><i style="width:0"></i></div></div>
+<p class="small muted" style="margin-top:8px">Quick add (counts everything liquid at room temperature: water, coffee, milk, soup, juice, ice, Jell-O, ice cream):</p>
+<div class="chips" id="fluidQuick"></div>
+<div class="row">
+<div><label for="flAmt">Amount</label><input id="flAmt" type="number"/></div>
+<div><label for="flUnit">Unit</label><select id="flUnit"><option value="ml">mL</option><option value="oz">fl oz</option></select></div>
+<div><label for="flWhat">What</label><input id="flWhat" placeholder="water, coffee…"/></div>
+<div style="flex:0"><button class="btn" id="addFluid">Add</button></div>
+</div>
+<div id="fluidList" style="margin-top:10px"></div>
+</div>
+<div class="card">
+<h3>Meals &amp; snacks</h3>
+<div class="row">
+<div><label for="mlType">Meal</label><select id="mlType"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
+<div><label for="mlTime">Time</label><input id="mlTime" type="time"/></div>
+<div><label for="mlNa">Sodium mg (optional)</label><input id="mlNa" type="number"/></div>
+</div>
+<div class="row" id="mlNutRow">
+<div><label for="mlKcal">Calories</label><input id="mlKcal" type="number"/></div>
+<div><label for="mlCarb">Carbs g</label><input id="mlCarb" step="0.1" type="number"/></div>
+<div><label for="mlFib">Fiber g</label><input id="mlFib" step="0.1" type="number"/></div>
+<div><label for="mlPro">Protein g</label><input id="mlPro" step="0.1" type="number"/></div>
+<div><label for="mlSat">Sat fat g</label><input id="mlSat" step="0.1" type="number"/></div>
+<div><label for="mlK">Potassium mg</label><input id="mlK" type="number"/></div>
+</div>
+<p class="small muted" style="margin:2px 0 0">All optional. Fill what you know; totals count only meals with a number.</p>
+<label for="mlDesc">What I ate</label><textarea id="mlDesc"></textarea>
+<div class="row"><div><label for="mlFl">Fluid in this meal, mL (soup, drink)</label><input id="mlFl" placeholder="adds to fluid total" type="number"/></div><div style="flex:0"><button class="btn" id="addMeal">Add meal</button></div></div>
+<div id="mealList" style="margin-top:10px"></div>
+<div class="tile" style="margin-top:8px"><div class="lbl">Sodium logged today</div><div class="val" id="naTotal" style="font-size:22px">—</div></div>
+<div class="note">Food and drink cautions from your care team appear on the Medicine Guide tab.</div>
+</div>
+<div class="card" id="lblCard" style="grid-column:1/-1">
+<h3>From a nutrition label</h3>
+<p class="small muted" style="margin-top:-4px">Type the per-serving numbers from the package, set how many servings you ate, then add it to the meal form. Add several items to build one meal, then click "Add meal".</p>
+<div class="row">
+<div style="flex:3"><label for="lbName">Item</label><input id="lbName" placeholder="e.g., low-sodium crackers"/></div>
+<div><label for="lbSize">Serving size (label)</label><input id="lbSize" placeholder="e.g., 5 crackers"/></div>
+<div><label for="lbServ">Servings eaten</label><input id="lbServ" min="0" step="0.25" type="number" value="1"/></div>
+</div>
+<div class="row">
+<div><label for="lbKcal">Calories</label><input id="lbKcal" type="number"/></div>
+<div><label for="lbNa">Sodium mg</label><input id="lbNa" type="number"/></div>
+<div><label for="lbCarb">Total carbs g</label><input id="lbCarb" step="0.1" type="number"/></div>
+<div><label for="lbFib">Fiber g</label><input id="lbFib" step="0.1" type="number"/></div>
+<div><label for="lbPro">Protein g</label><input id="lbPro" step="0.1" type="number"/></div>
+<div><label for="lbSat">Sat fat g</label><input id="lbSat" step="0.1" type="number"/></div>
+<div><label for="lbK">Potassium mg</label><input id="lbK" type="number"/></div>
+</div>
+<div class="row" style="margin-top:8px;align-items:center"><div style="flex:0 0 auto"><button class="btn" id="lbAdd">Add to meal form</button></div><div class="small" id="lbMsg"></div></div>
+<p class="small muted">Potassium is optional on US labels, so many packages omit it. "Salt substitute" or "potassium chloride" in the ingredient list matters for some heart and kidney medicines; ask your care team whether you should avoid them.</p>
+</div>
+<div class="card" id="nutCard" style="grid-column:1/-1">
+<h3>Nutrition today <span class="small muted" id="nutCover"></span></h3>
+<div style="overflow-x:auto"><table id="nutTable"></table></div>
+<p class="small muted">Targets come from the Settings tab; blank targets show totals only. Set them with your doctor or dietitian. Some heart and kidney medicines raise or lower potassium, so treat it as a number to discuss with your care team, not one to push up or down on your own.</p>
+</div>
+</div>
+</section>
+<!-- ============ EXERCISE ============ -->
+<section class="tab" id="tab-recipes">
+<h2>Go To Meals</h2>
+<p class="lede">Your recipe library with per-serving estimates. Pick "Servings to log", then "Log" adds every nutrient, scaled, to the day's meals, sodium, and fluid totals.</p>
+<div class="card tile" style="margin-bottom:14px"><div class="lbl">Sodium budget today</div><div class="val" id="naBudgetVal">—</div><div class="sub" id="naBudgetSub"></div><div class="bar" id="naBudgetBar"><i style="width:0"></i></div></div>
+<div class="grid g2">
+<div>
+<div class="row" style="margin-bottom:8px"><div><label for="rcpSearch">Search</label><input id="rcpSearch" placeholder="name or ingredient"/></div>
+<div><label for="rcpType">Meal</label><select id="rcpType"><option value="">All</option><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
+<div><label for="rcpSort">Sort</label><select id="rcpSort"><option value="name">Name</option><option value="na">Lowest sodium</option><option value="kcal">Lowest calories</option><option value="sat">Lowest sat fat</option><option value="carb">Lowest carbs</option></select></div><div><label for="rcpServ">Servings to log</label><select id="rcpServ"><option>0.5</option><option selected="">1</option><option>1.5</option><option>2</option><option>3</option></select></div></div>
+<div id="rcpList"></div>
+</div>
+<div class="card">
+<h3 id="rcpFormTitle">Add a recipe</h3>
+<input id="rcpId" type="hidden"/>
+<div class="row"><div style="flex:3"><label for="rName">Name</label><input id="rName"/></div>
+<div><label for="rMeal">Meal</label><select id="rMeal"><option>Breakfast</option><option>Lunch</option><option selected="">Dinner</option><option>Snack</option></select></div>
+<div><label for="rServ">Servings</label><input id="rServ" type="number" value="2"/></div></div>
+<label for="rIng">Ingredients (one per line)</label><textarea id="rIng" style="min-height:110px"></textarea>
+<label for="rSteps">Steps</label><textarea id="rSteps" style="min-height:80px"></textarea>
+<h3 style="margin-top:10px;font-size:15px">Per serving (estimates)</h3>
+<div class="row"><div><label for="rKcal">Calories</label><input id="rKcal" type="number"/></div><div><label for="rNa">Sodium mg</label><input id="rNa" type="number"/></div>
+<div><label for="rK">Potassium mg</label><input id="rK" type="number"/></div><div><label for="rPro">Protein g</label><input id="rPro" type="number"/></div><div><label for="rCarb">Carbs g</label><input id="rCarb" step="0.1" type="number"/></div><div><label for="rFib">Fiber g</label><input id="rFib" step="0.1" type="number"/></div><div><label for="rSat">Sat fat g</label><input id="rSat" step="0.1" type="number"/></div><div><label for="rFl">Fluid mL</label><input id="rFl" type="number"/></div></div>
+<label for="rNotes">Notes / swaps</label><input id="rNotes"/>
+<div class="row" style="margin-top:10px;gap:8px"><button class="btn" id="rSave">Save recipe</button><button class="btn ghost" id="rClear">Clear</button><button class="btn ghost" id="rAsk">Copy request for Claude</button></div>
+<div class="small" id="rMsg"></div>
+<div class="note">Don't know the numbers? Fill in name, servings and ingredients, click "Copy request for Claude", and paste it into a chat at claude.ai (or another AI assistant). It returns an import file with per-serving estimates. Load it below.</div>
+<label for="rImport">Import from Claude (.json)</label><input accept="application/json" id="rImport" type="file"/><div class="small" id="rImpMsg"></div>
+</div>
+</div>
+<p class="small muted">Nutrition figures are estimates from typical USDA values for the ingredients listed. Brands vary widely in sodium, so check labels. Potassium is shown because several heart and blood pressure medicines change blood potassium; ask your care team whether you have a potassium limit.</p>
+</section>
+<section class="tab" id="tab-exercise">
+<h2>Exercise</h2>
+<p class="lede" id="exLede"></p>
+<div class="grid g4" id="exTiles"></div>
+<div class="card" style="margin-top:14px">
+<h3>Your routine and timing</h3>
+<div class="grid g3">
+<div>
+<h4 style="margin:4px 0;color:var(--ink2);font-size:13px;text-transform:uppercase;letter-spacing:.05em">Exercise-day morning</h4>
+<ol style="margin:4px 0 0 18px;padding:0;font-size:14px">
+<li>Weigh, take morning medicines, eat breakfast.</li>
+<li>At 2 hours: rest 5 minutes, then BP, pulse and SpO₂. Recheck in 15 to 20 minutes if high.</li>
+<li><b>Then exercise.</b> If you take a water pill, choose a route or indoor equipment near a bathroom for the hours it is working.</li>
+<li>Afterward, stand up slowly. Blood pressure medicines and water pills can make you light-headed.</li>
+</ol>
+<p class="small muted">Exercise lowers BP for several hours, so exercising before you measure would make the reading look better than it really is. If you walk right after your pills instead, do it the same way each time and tick "Exercised before this reading" on the Morning Check-in tab.</p>
+</div>
+<div>
+<h4 style="margin:4px 0;color:var(--ink2);font-size:13px;text-transform:uppercase;letter-spacing:.05em">Each 40-minute session</h4>
+<table style="font-size:14px">
+<tr><td><b>5 min</b></td><td>Warm-up at an easy pace</td></tr>
+<tr><td><b>30 min</b></td><td>Steady effort, RPE 11 to 13: you can talk, not sing</td></tr>
+<tr><td><b>5 min</b></td><td>Cool-down and gentle stretching. Don't stop suddenly; let your pulse settle.</td></tr>
+</table>
+<p class="small muted">Go by effort and breathing, not a pulse target. Beta-blockers and some other heart medicines keep your heart rate from climbing the way it normally would.</p>
+</div>
+<div>
+<h4 style="margin:4px 0;color:var(--ink2);font-size:13px;text-transform:uppercase;letter-spacing:.05em">Suggested month-1 week</h4>
+<table style="font-size:14px">
+<tr><td><b>Mon</b></td><td>Stationary bike, 40 min</td></tr>
+<tr><td><b>Wed</b></td><td>Brisk walk, 40 min (flat route, restroom along the way)</td></tr>
+<tr><td><b>Fri</b></td><td>Bike or walk, 40 min</td></tr>
+<tr><td><b>Any day</b></td><td>Optional 10 to 15 min of tai chi for balance (on top of the 40-minute sessions, not counted toward them)</td></tr>
+</table>
+<p class="small muted">Leave a rest day between sessions. Cold mornings raise BP, so exercise indoors when it is cold out. If you have a fluid limit, don't drink beyond it for workouts without asking your care team.</p>
+</div>
+</div>
+<div class="critbox" style="margin-bottom:0"><b>Stop and call your care team</b> for chest pain or pressure, unusual shortness of breath, light-headedness, palpitations, or a pulse that stays unusually slow. Call 911 if chest pain doesn't ease with rest. Get your doctor's or rehab team's OK before moving up a month in your plan.</div>
+</div>
+<div class="grid g2" style="margin-top:14px">
+<div class="card">
+<h3>Log a session</h3>
+<div class="row">
+<div><label for="exType">Activity</label><select id="exType"><option>Walking</option><option>Tai chi</option><option>Karate / kata</option><option>Stationary bike</option><option>Strength / resistance bands</option><option>Cardiac rehab session</option><option>Stretching / balance</option><option>Other</option></select></div>
+<div><label for="exMin">Minutes</label><input id="exMin" type="number"/></div>
+<div><label for="exRPE">Effort (RPE 6–20)</label><input id="exRPE" max="20" min="6" placeholder="aim 11–13" type="number"/></div>
+</div>
+<div class="row">
+<div><label for="exHR1">Pulse before</label><input id="exHR1" type="number"/></div>
+<div><label for="exHR2">Pulse after</label><input id="exHR2" type="number"/></div>
+</div>
+<div class="row" id="sweatRow">
+<div><label for="exWB">Weight before (<span class="wunit">lb</span>)</label><input id="exWB" step="0.1" type="number"/></div>
+<div><label for="exWA">Weight after (<span class="wunit">lb</span>)</label><input id="exWA" step="0.1" type="number"/></div>
+<div><label for="exDrink">Drank during, mL</label><input id="exDrink" placeholder="adds to fluid total" type="number"/></div>
+</div>
+<p class="small muted" id="sweatHint" style="margin:2px 0 0">Weigh right before and right after, same clothes, before drinking or using the bathroom. Sweat ≈ weight lost + anything drunk during (1 lb ≈ 454 mL).</p>
+<label for="exNote">Notes / symptoms</label><input id="exNote"/>
+<button class="btn" id="addEx" style="margin-top:8px">Add session</button>
+<div class="note">RPE 11–13 means "fairly light to somewhat hard": you can talk but not sing. Beta-blockers blunt the heart rate response, so effort and breathing are better guides than a target pulse. Stop and call your care team for chest pain, unusual shortness of breath, light-headedness, or palpitations.</div>
+</div>
+<div class="card">
+<h3>Weekly minutes vs goal</h3>
+<div class="chart" id="chEx"></div>
+<div id="exList" style="margin-top:10px;max-height:300px;overflow:auto"></div>
+</div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3>Progression plan</h3>
+<p class="small muted">Month 1 is fixed at the first row of your plan. Edit the plan on the Settings tab once your doctor or rehab team clears an increase.</p>
+<table id="planTable"></table>
+</div>
+</section>
+<!-- ============ GUIDE ============ -->
+<section class="tab guide" id="tab-guide">
+<h2>Medicine Guide</h2>
+<div class="critbox"><b>Call 911</b> for chest pain or pressure, fainting, sudden severe headache, signs of stroke (face drooping, arm weakness, speech trouble), coughing or vomiting blood, or severe shortness of breath.</div>
+<p class="lede">Your own reference, written from what your doctor, nurse practitioner, or pharmacist tells you. Add notes for each medicine on the Settings &amp; Data tab. Before starting any new prescription, OTC product, or supplement, ask your pharmacist to check it against your list.</p>
+<div id="guideCross"></div>
+<div id="guideMeds"></div>
+<p class="small muted">Look up full labels: <a href="https://dailymed.nlm.nih.gov/dailymed/" rel="noopener" target="_blank">DailyMed (NIH)</a> · <a href="https://medlineplus.gov/druginformation.html" rel="noopener" target="_blank">MedlinePlus Drugs</a>.</p>
+</section>
+<!-- ============ SETTINGS & DATA ============ -->
+<section class="tab" id="tab-notes">
+<h2>Notes</h2>
+<p class="lede">Doctor visits, questions to bring to your next appointment, symptoms, medicine changes, and lab results in one place.</p>
+<div class="grid g2">
+<div class="card">
+<h3 id="nFormTitle">New note</h3>
+<input id="nId" type="hidden"/>
+<div class="row"><div><label for="nDate">Date</label><input id="nDate" type="date"/></div>
+<div><label for="nCat">Category</label><select id="nCat"><option>Question for doctor</option><option>Doctor visit</option><option>Symptom</option><option>Medication change</option><option>Lab result</option><option>General</option></select></div></div>
+<label for="nTitle">Title</label><input id="nTitle"/>
+<label for="nBody">Note</label><textarea id="nBody" style="min-height:120px"></textarea>
+<label for="nTags">Tags (comma separated)</label><input id="nTags" placeholder="potassium, cardiology, rehab"/>
+<div class="row" style="margin-top:10px;gap:8px"><button class="btn" id="nSave">Save note</button><button class="btn ghost" id="nClear">Clear</button></div>
+</div>
+<div class="card">
+<h3>Open questions for your next visit</h3>
+<div id="nOpen"></div>
+<button class="btn ghost sm" id="nPrintQ" style="margin-top:8px">Copy question list</button>
+</div>
+</div>
+<div class="card" style="margin-top:14px">
+<div class="row" style="margin-bottom:8px"><div><label for="nSearch">Search</label><input id="nSearch"/></div>
+<div><label for="nFilter">Category</label><select id="nFilter"><option value="">All</option><option>Question for doctor</option><option>Doctor visit</option><option>Symptom</option><option>Medication change</option><option>Lab result</option><option>General</option></select></div></div>
+<div id="nList"></div>
+</div>
+</section>
+<section class="tab" id="tab-reading">
+<h2>Reading List</h2>
+<p class="lede">Guidelines, studies, patient education and podcasts behind your plan. Filter by type to scan academic vs practitioner vs podcast.</p>
+<div class="card" style="margin-bottom:14px">
+<div class="chips" id="rlTypes"></div>
+<div class="row"><div><label for="rlTopic">Topic</label><select id="rlTopic"><option value="">All topics</option><option>Blood pressure</option><option>Sodium &amp; diet</option><option>Exercise</option><option>Medications</option><option>Heart health</option><option>Fluids &amp; weight</option></select></div>
+<div><label for="rlStatus">Status</label><select id="rlStatus"><option value="">Any</option><option>To read</option><option>Reading</option><option>Done</option></select></div>
+<div><label for="rlSearch">Search</label><input id="rlSearch"/></div></div>
+</div>
+<div class="grid g2">
+<div id="rlList"></div>
+<div class="card">
+<h3 id="rlFormTitle">Add an item</h3><input id="rlId" type="hidden"/>
+<label for="rlTitle">Title</label><input id="rlTitle"/>
+<div class="row"><div><label for="rlAuth">Author / organization</label><input id="rlAuth"/></div><div><label for="rlSrc">Journal / outlet, year</label><input id="rlSrc"/></div></div>
+<div class="row"><div><label for="rlType">Type</label><select id="rlType"><option>Academic</option><option>Guideline</option><option>Practitioner</option><option>Patient education</option><option>Podcast</option><option>News</option></select></div>
+<div><label for="rlTop">Topic</label><select id="rlTop"><option>Blood pressure</option><option>Sodium &amp; diet</option><option>Exercise</option><option>Medications</option><option>Heart health</option><option>Fluids &amp; weight</option></select></div>
+<div><label for="rlStat">Status</label><select id="rlStat"><option>To read</option><option>Reading</option><option>Done</option></select></div></div>
+<label for="rlUrl">Link (optional)</label><input id="rlUrl" placeholder="https://"/>
+<label for="rlWhy">Why it matters / my notes</label><textarea id="rlWhy"></textarea>
+<div class="row" style="margin-top:10px;gap:8px"><button class="btn" id="rlSave">Save</button><button class="btn ghost" id="rlClear">Clear</button></div>
+</div>
+</div>
+</section>
+<section class="tab" id="tab-articles">
+<h2>Found Articles</h2>
+<div class="note"><b>How it works.</b> (1) Add the article here and click "Copy request for Claude". (2) In a chat at claude.ai, paste the request and upload the article (PDF, screenshot, or link). (3) Claude checks its claims against guidelines and the research and returns an import file. Load it below and the analysis appears on the article's card.</div>
+<div class="grid g2">
+<div class="card">
+<h3 id="aFormTitle">Add an article</h3><input id="aId" type="hidden"/>
+<label for="aTitle">Title</label><input id="aTitle"/>
+<div class="row"><div><label for="aSrc">Publication / site</label><input id="aSrc"/></div><div><label for="aAuth">Author</label><input id="aAuth"/></div><div><label for="aDate">Published</label><input id="aDate" type="date"/></div></div>
+<label for="aUrl">Link</label><input id="aUrl" placeholder="https://"/>
+<label for="aWhy">What caught my attention / what I want checked</label><textarea id="aWhy"></textarea>
+<div class="row" style="margin-top:10px;gap:8px"><button class="btn" id="aSave">Save article</button><button class="btn ghost" id="aClear">Clear</button></div>
+</div>
+<div class="card">
+<h3>Load analysis from Claude</h3>
+<input accept="application/json" id="aImport" type="file"/><div class="small" id="aImpMsg"></div>
+<div class="row" style="margin-top:12px"><div><label for="aFilter">Show</label><select id="aFilter"><option value="">All articles</option><option>Awaiting analysis</option><option>Analyzed</option></select></div></div>
+<div class="tile" style="margin-top:10px"><div class="lbl">Library</div><div class="val" id="aCount" style="font-size:22px">0</div></div>
+<details style="margin-top:10px"><summary class="small">What an analysis contains</summary><p class="small">A plain summary; an overall rating (Well supported, Partly supported, Weak evidence, Not supported, Misleading); each key claim checked against sources; caveats; questions to ask your doctor; how it applies to your own medicines and routine; and the sources I used.</p></details>
+</div>
+</div>
+<div id="aList" style="margin-top:14px"></div>
+<p class="small muted">Analyses are research summaries to discuss with your care team, not medical advice. Never change a medicine because of an article without talking to your prescriber.</p>
+</section>
+<section class="tab" id="tab-data">
+<h2>Settings &amp; Data</h2>
+<div class="grid g2">
+<div class="card" id="medEditor" style="grid-column:1/-1">
+<h3>My medicines</h3>
+<p class="small muted">Enter each medicine the way it appears on the pharmacy label. Twice-daily medicines go in as two entries (one Morning, one Evening). When a dose changes, use <b>Change dose</b>: the old entry ends yesterday and the new one starts today, so your history stays accurate.</p>
+<div style="overflow-x:auto"><table id="medTable"></table></div>
+<h4 id="medFormTitle" style="margin:14px 0 4px">Add a medicine</h4>
+<input id="medId" type="hidden"/>
+<div class="row">
+<div style="flex:2"><label for="medName">Medicine</label><input id="medName" placeholder="e.g., Lisinopril"/></div>
+<div><label for="medDose">Dose / instructions</label><input id="medDose" placeholder="e.g., 10 mg tablet"/></div>
+<div><label for="medSlot">Time of day</label><select id="medSlot"><option value="AM">Morning</option><option value="PM">Evening</option></select></div>
+<div><label for="medFrom">Start date</label><input id="medFrom" type="date"/></div>
+</div>
+<details style="margin-top:8px"><summary class="small">Notes for the Medicine Guide (optional; from your doctor, NP, or pharmacist)</summary>
+<label for="medPurpose">What it is for</label><input id="medPurpose"/>
+<label for="medHow">How to take it</label><input id="medHow" placeholder="with food, at bedtime, 12 hours apart..."/>
+<label for="medCaut">Cautions: side effects to watch, foods or products to avoid (one per line)</label><textarea id="medCaut"></textarea>
+</details>
+<div class="row" style="margin-top:10px;gap:8px"><button class="btn" id="medSave">Save medicine</button><button class="btn ghost" id="medClear">Clear</button><span class="small" id="medMsg"></span></div>
+<label for="setCaut" style="margin-top:14px">General cautions from your care team (one per line; shown at the top of the Medicine Guide)</label>
+<textarea id="setCaut" placeholder="e.g., No ibuprofen or naproxen
+Ask the pharmacist before cold medicines"></textarea>
+<button class="btn ghost sm" id="saveCaut" style="margin-top:6px">Save cautions</button> <span class="small" id="cautMsg"></span>
+</div>
+<div class="card">
+<h3>Targets &amp; alert thresholds</h3>
+<p class="small muted">Defaults are common care-team values. Replace them with yours.</p>
+<div class="row"><div><label for="setOwner">Your name (optional; shown on printed reports)</label><input id="setOwner"/></div></div><div class="row">
+<div><label>Weight unit</label><select id="setWUnit"><option value="lb">lb</option><option value="kg">kg</option></select></div>
+<div><label>Fluid limit (mL/day)</label><input id="setFluid" type="number"/></div>
+</div>
+<div class="row">
+<div><label>Weight gain alert, 1 day</label><input id="setWDay" step="0.1" type="number"/></div>
+<div><label>Weight gain alert, 7 days</label><input id="setWWeek" step="0.1" type="number"/></div>
+</div>
+<div class="row">
+<div><label>High BP: systolic ≥</label><input id="setSysHi" type="number"/></div>
+<div><label>High BP: diastolic ≥</label><input id="setDiaHi" type="number"/></div>
+<div><label>Low BP: systolic &lt;</label><input id="setSysLo" type="number"/></div>
+</div>
+<div class="row">
+<div><label>Pulse low &lt;</label><input id="setHrLo" type="number"/></div>
+<div><label>Pulse high &gt;</label><input id="setHrHi" type="number"/></div>
+<div><label>SpO₂ low &lt;</label><input id="setSpo2" type="number"/></div>
+</div>
+<div class="row">
+<div><label>Sodium target mg/day (optional)</label><input id="setNa" type="number"/></div>
+<div><label>Exercise program start</label><input id="setExStart" type="date"/></div>
+</div>
+<h3 style="margin-top:14px">Nutrition targets <span class="small muted">(optional; leave blank for totals only)</span></h3>
+<div class="row">
+<div><label for="setKcalT">Calories per day</label><input id="setKcalT" type="number"/></div>
+<div><label for="setProT">Protein goal g</label><input id="setProT" type="number"/></div>
+<div><label for="setFibT">Fiber goal g</label><input id="setFibT" type="number"/></div>
+</div>
+<div class="row">
+<div><label for="setSatT">Sat fat max g</label><input id="setSatT" type="number"/></div>
+<div><label for="setCarbLo">Carbs: alert below g</label><input id="setCarbLo" type="number"/></div>
+<div><label for="setKHi">Potassium: flag above mg</label><input id="setKHi" type="number"/></div>
+</div>
+<p class="small muted">Some medicines (for example SGLT2 inhibitors such as dapagliflozin or empagliflozin) raise the risk of ketoacidosis on very low-carbohydrate days. Use this alert only if your care team gives you a floor.</p>
+<h3 style="margin-top:14px">Exercise progression by month</h3>
+<table id="planEdit"></table>
+<button class="btn ghost sm" id="addPlanRow" style="margin-top:6px">+ Add month</button>
+<div style="margin-top:12px"><button class="btn" id="saveSettings">Save settings</button> <span class="small" id="setMsg"></span></div>
+</div>
+<div class="card">
+<h3>Backup, export &amp; restore</h3>
+<p class="small">Everything you log is saved in this browser on this device; nothing is sent to a server. Export a backup now and then for your own files.</p>
+<div class="row" style="gap:8px">
+<button class="btn" id="expJSON">Export backup (JSON)</button>
+<button class="btn ghost" id="expCSV">Export daily log (CSV)</button>
+<button class="btn ghost" id="printBtn">Print for doctor visit</button>
+</div>
+<label for="impFile" style="margin-top:14px">Restore from backup</label>
+<input accept="application/json" id="impFile" type="file"/>
+<div class="small" id="impMsg"></div>
+<hr style="border:0;border-top:1px solid var(--rule);margin:16px 0"/>
+<button class="btn ghost sm" id="demoBtn">Load 45 days of sample data</button>
+<button class="btn danger sm" id="clearBtn">Erase logged data</button>
+<p class="small muted">"Erase logged data" removes daily logs, exercise, notes and articles on this device, so it asks you to type ERASE. Recipes, medicines, the Reading List and settings stay. Erase on each device, or the next sync file you load brings the data back.</p>
+</div>
+<div class="card" id="syncCard" style="grid-column:1/-1">
+<h3>Sync between your Mac, iPhone and iPad</h3>
+<p class="small">Your ledger lives in this browser on this device. To share it across devices, keep one <b>sync file</b> in an iCloud Drive folder named <b>Health Ledger</b>. Loading a sync file <b>merges</b> it with what is here: nothing logged on this device is thrown away.</p>
+<div class="row" style="gap:8px">
+<button class="btn" id="syncSave">Save sync file</button>
+<button class="btn ghost" id="syncLoadBtn">Load sync file</button>
+<button class="btn ghost" id="syncLink">Link a sync file (auto-sync)</button>
+</div>
+<input accept="application/json,.json" id="syncFile" style="display:none" type="file"/>
+<div class="small" id="syncMsg" style="margin-top:8px"></div>
+<details style="margin-top:8px"><summary class="small">The routine</summary>
+<ol class="small" style="margin:6px 0 0 18px;padding:0">
+<li><b>Finish on one device:</b> Save sync file to iCloud Drive › Health Ledger (on iPhone or iPad choose <i>Save to Files</i>; replace the old file if asked).</li>
+<li><b>Start on another device:</b> Load sync file from the same folder before you log anything.</li>
+<li>On a Mac using Chrome or Edge, <b>Link a sync file</b> once and the ledger reads and writes it automatically.</li>
+</ol>
+<p class="small muted">Deleting an entry on one device does not delete it from a sync file another device made. Sync right after deleting.</p>
+</details>
+</div>
+</div>
+</section>
+</main><footer class="foot small muted"><p><b>Not medical advice.</b> The Daily Health Ledger is a personal record-keeping tool, not a medical device. It does not diagnose, treat, or replace your care team. In an emergency, call 911.</p><p>Your data stays on your devices. Open source under the MIT License · <a href="https://github.com/OWNER/health-ledger" id="repoLink" rel="noopener" target="_blank">Source &amp; help</a> · <a href="https://github.com/sponsors/OWNER" id="donateLink" rel="noopener" target="_blank">Support the project</a></p></footer>
+<script>
+/* ================= MEDICINE DATA =================
+   MEDS is filled from the user's own list (S.medList) by the User Medicines module.
+   GUIDE and CROSS stay as empty shells for older code paths. */
+const MEDS = [];
+const GUIDE = [];
+const CROSS = {title:'General cautions', avoid:[], usually:[], food:[]};
+</script>
+<script>
+/* ================= STATE ================= */
+const KEY = 'dailyHealthLedger.v1';
+const DEFAULTS = {
+  settings:{wUnit:'lb', fluidMl:2000, wDay:2, wWeek:5, sysHi:140, diaHi:90, sysLo:90, hrLo:50, hrHi:110, spo2Lo:92, naMg:2300,
+    exStart:'', plan:[{m:1,s:3,min:40},{m:2,s:3,min:45},{m:3,s:4,min:45},{m:4,s:5,min:45}]},
+  days:{}, exercise:[]
+};
+let S;
+function load(){ try{ S = JSON.parse(localStorage.getItem(KEY)) || null; }catch(e){ S=null; }
+  if(!S) S = JSON.parse(JSON.stringify(DEFAULTS));
+  S.settings = Object.assign({}, DEFAULTS.settings, S.settings||{}); S.days=S.days||{}; S.exercise=S.exercise||[];
+  if(!S.settings.exStart) S.settings.exStart = todayISO(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ alert('Could not save in this browser. Export a backup now.'); } }
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function todayISO(){ return iso(new Date()); }
+function parseISO(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function addDays(s,n){ const d=parseISO(s); d.setDate(d.getDate()+n); return iso(d); }
+function nowHM(){ const d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function fmtDate(s,opt){ return parseISO(s).toLocaleDateString(undefined,opt||{weekday:'short',month:'short',day:'numeric'}); }
+function num(v){ const n=parseFloat(v); return isNaN(n)?null:n; }
+function day(s){ s=s||cur; if(!S.days[s]) S.days[s]={meds:{},fluids:[],meals:[],symptoms:[]}; const d=S.days[s];
+  d.meds=d.meds||{}; d.fluids=d.fluids||[]; d.meals=d.meals||[]; d.symptoms=d.symptoms||[]; return d; }
+function peek(s){ return S.days[s]||null; }
+function hmToMin(t){ if(!t) return null; const [h,m]=t.split(':').map(Number); return h*60+m; }
+function minToHM(m){ m=((m%1440)+1440)%1440; return pad(Math.floor(m/60))+':'+pad(m%60); }
+function to12(t){ if(!t) return ''; let [h,m]=t.split(':').map(Number); const ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+pad(m)+' '+ap; }
+function mean(a){ return a.length? a.reduce((x,y)=>x+y,0)/a.length : null; }
+function sd(a){ if(a.length<2) return null; const m=mean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1)); }
+function r(v,d=0){ return v==null? '—' : Number(v).toFixed(d); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function status(kind,text){ const ic={good:'✓',warn:'▲',crit:'■'}[kind]; return `<span class="status ${kind}">${ic} ${text}</span>`; }
+
+/* derived per-day metrics */
+function finalBP(d){ if(!d) return null; if(d.bp2&&d.bp2.sys) return d.bp2; if(d.bp1&&d.bp1.sys) return d.bp1; return null; }
+function fluidTotal(d){ if(!d) return 0; return (d.fluids||[]).reduce((s,f)=>s+(f.ml||0),0); }
+function sodiumTotal(d){ if(!d) return null; const v=(d.meals||[]).map(m=>m.na).filter(x=>x!=null); return v.length? v.reduce((a,b)=>a+b,0):null; }
+function dosesTaken(d){ if(!d) return 0; return MEDS.filter(m=>d.meds&&d.meds[m.id]&&d.meds[m.id].taken).length; }
+function adherence(d){ return d? dosesTaken(d)/MEDS.length*100 : null; }
+function hasAny(d){ return d && (d.weight!=null || finalBP(d) || d.spo2!=null || (d.fluids&&d.fluids.length) || dosesTaken(d)>0); }
+
+/* ================= NAV ================= */
+let cur = todayISO();
+function setDate(s){ cur=s; $('curDate').value=s; renderAll(); }
+function initNav(){
+  $('tabs').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));
+    document.querySelectorAll('section.tab').forEach(s=>s.classList.toggle('active', s.id==='tab-'+b.dataset.tab));
+    window.scrollTo(0,0); renderAll(); });
+  $('curDate').addEventListener('change',e=>setDate(e.target.value||todayISO()));
+  $('prevDay').onclick=()=>setDate(addDays(cur,-1));
+  $('nextDay').onclick=()=>setDate(addDays(cur,1));
+  $('todayBtn').onclick=()=>setDate(todayISO());
+}
+
+/* ================= MORNING ================= */
+const SYMPTOMS=['Feeling well','Ankle/leg swelling','Short of breath','Breathless lying flat','Dizzy / light-headed','Fatigue','Palpitations','Chest discomfort','Bruising / bleeding','Muscle aches','Cough','Poor sleep'];
+function bpFlag(b){ const st=S.settings; if(!b||!b.sys) return '';
+  if(b.sys>=180||b.dia>=120) return status('crit','Very high: rest 5 min and recheck; call your doctor if it stays this high, 911 with chest pain, shortness of breath, or stroke signs');
+  if(b.sys>=st.sysHi||b.dia>=st.diaHi) return status('warn','High: retake in 15–20 minutes');
+  if(b.sys<st.sysLo) return status('warn','Low: sit, hydrate within your limit, note any dizziness');
+  return status('good','In range'); }
+function hrFlag(p){ const st=S.settings; if(p==null) return ''; if(p<st.hrLo) return status('warn','Pulse low'); if(p>st.hrHi) return status('warn','Pulse high'); return ''; }
+function spo2Flag(v){ if(v==null) return ''; if(v<90) return status('crit','SpO₂ below 90%: recheck, call your care team'); if(v<S.settings.spo2Lo) return status('warn','SpO₂ below your threshold'); return status('good','SpO₂ OK'); }
+function weightFlag(s){ const d=peek(s); if(!d||d.weight==null) return '';
+  const y=peek(addDays(s,-1)), w=peek(addDays(s,-7)); const st=S.settings, u=st.wUnit; let out='';
+  if(y&&y.weight!=null){ const ch=d.weight-y.weight; out+=`<span class="small">Change since yesterday: <b>${ch>0?'+':''}${ch.toFixed(1)} ${u}</b></span> `;
+    if(ch>=st.wDay) out+=status('warn',`Up ${ch.toFixed(1)} ${u} in 1 day: call your care team`); }
+  if(w&&w.weight!=null){ const ch=d.weight-w.weight; if(ch>=st.wWeek) out+=status('warn',`Up ${ch.toFixed(1)} ${u} in 7 days: call your care team`); }
+  return out; }
+
+function renderMorning(){
+  const d=peek(cur)||{}; document.querySelectorAll('.wunit').forEach(e=>e.textContent=S.settings.wUnit);
+  $('wt').value=d.weight??''; $('wtTime').value=d.weightTime||'';
+  $('wtMsg').innerHTML=weightFlag(cur);
+  const b1=d.bp1||{}, b2=d.bp2||{};
+  $('sys1').value=b1.sys??''; $('dia1').value=b1.dia??''; $('pul1').value=b1.pulse??''; $('bpt1').value=b1.time||''; if(b1.arm) $('arm').value=b1.arm;
+  $('spo2').value=d.spo2??'';
+  $('sys2').value=b2.sys??''; $('dia2').value=b2.dia??''; $('pul2').value=b2.pulse??''; $('bpt2').value=b2.time||'';
+  $('bp1Msg').innerHTML=[bpFlag(b1),hrFlag(b1.pulse),spo2Flag(d.spo2)].join(' ');
+  $('bp2Msg').innerHTML=b2.sys? [bpFlag(b2),hrFlag(b2.pulse)].join(' '):'';
+  const amTimes=MEDS.filter(m=>m.slot==='AM').map(m=>d.meds&&d.meds[m.id]&&d.meds[m.id].taken?hmToMin(d.meds[m.id].time):null).filter(x=>x!=null);
+  const amDone=amTimes.length, amN=MEDS.filter(m=>m.slot==='AM').length;
+  $('amStatus').innerHTML = amDone? `${amDone} of ${amN} morning doses logged.` : 'No morning doses logged yet.';
+  if(amDone){ const t=Math.max(...amTimes)+120; $('bpWindow').textContent=`(window opens ${to12(minToHM(t))})`; } else $('bpWindow').textContent='';
+  $('dayNotes').value=d.notes||'';
+  $('symChips').innerHTML=SYMPTOMS.map(s=>`<button class="chip" data-s="${esc(s)}" style="${(d.symptoms||[]).includes(s)?'background:var(--yale);color:#fff':''}">${esc(s)}</button>`).join('');
+}
+function initMorning(){
+  $('saveWt').onclick=()=>{ const v=num($('wt').value); const d=day(); d.weight=v; d.weightTime=$('wtTime').value||nowHM(); save(); renderAll(); };
+  $('takeAllAM').onclick=()=>{ const d=day(), t=nowHM(); MEDS.filter(m=>m.slot==='AM').forEach(m=>{ if(!(d.meds[m.id]&&d.meds[m.id].taken)) d.meds[m.id]={taken:true,time:t}; }); save(); renderAll(); };
+  $('saveBP1').onclick=()=>{ const d=day(); d.bp1={sys:num($('sys1').value),dia:num($('dia1').value),pulse:num($('pul1').value),time:$('bpt1').value||nowHM(),arm:$('arm').value};
+    d.spo2=num($('spo2').value); save(); renderAll();
+    const st=S.settings; if(d.bp1.sys>=st.sysHi||d.bp1.dia>=st.diaHi){ $('recheckCard').scrollIntoView({behavior:'smooth'}); startTimer(); } };
+  $('saveBP2').onclick=()=>{ const d=day(); d.bp2={sys:num($('sys2').value),dia:num($('dia2').value),pulse:num($('pul2').value),time:$('bpt2').value||nowHM()}; save(); renderAll(); };
+  $('saveNotes').onclick=()=>{ day().notes=$('dayNotes').value; save(); $('saveNotes').textContent='Saved ✓'; setTimeout(()=>$('saveNotes').textContent='Save notes',1200); };
+  $('symChips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; const d=day(), s=b.dataset.s;
+    d.symptoms = d.symptoms.includes(s)? d.symptoms.filter(x=>x!==s) : d.symptoms.concat(s); save(); renderMorning(); });
+  $('startTimer').onclick=startTimer; $('stopTimer').onclick=()=>{ clearInterval(tmr); tmr=null; $('timerDisp').textContent='15:00'; };
+}
+let tmr=null;
+function startTimer(){ clearInterval(tmr); const end=Date.now()+15*60000;
+  tmr=setInterval(()=>{ const left=Math.max(0,end-Date.now()); const m=Math.floor(left/60000), s=Math.floor(left%60000/1000);
+    $('timerDisp').textContent=pad(m)+':'+pad(s);
+    if(left<=0){ clearInterval(tmr); tmr=null; $('timerDisp').textContent='Recheck now'; try{ const a=new (window.AudioContext||window.webkitAudioContext)(); const o=a.createOscillator(); o.frequency.value=880; o.connect(a.destination); o.start(); setTimeout(()=>o.stop(),700); }catch(e){} document.title='⏰ Recheck BP'; setTimeout(()=>document.title='Daily Health Ledger',60000); } },1000); }
+
+/* ================= MEDICINES ================= */
+function renderMeds(){
+  const d=peek(cur)||{meds:{}};
+  const row=m=>{ const x=d.meds&&d.meds[m.id]; const t=x&&x.taken;
+    return `<div class="medrow ${t?'done':''}"><input type="checkbox" data-id="${m.id}" ${t?'checked':''} aria-label="${esc(m.name)}">
+      <div class="nm"><b>${esc(m.name)}</b><span>${esc(m.dose)}</span></div>
+      <div class="tm">${t?`<input type="time" data-time="${m.id}" value="${x.time||''}" style="width:120px">`:'<span class="muted">not taken</span>'}</div></div>`; };
+  $('medsAM').innerHTML=MEDS.filter(m=>m.slot==='AM').map(row).join('');
+  $('medsPM').innerHTML=MEDS.filter(m=>m.slot==='PM').map(row).join('');
+  $('pmNote').innerHTML = MEDS.some(m=>m.slot==='PM')? 'Twice-daily medicines appear twice: once in the morning list and once here.' : '';
+  // 14-day grid
+  let h='<tr><th>Medicine</th>'; const ds=[]; for(let i=13;i>=0;i--) ds.push(addDays(cur,-i));
+  h+=ds.map(s=>`<th class="num">${parseISO(s).toLocaleDateString(undefined,{month:'numeric',day:'numeric'})}</th>`).join('')+'</tr>';
+  MEDS.forEach(m=>{ h+=`<tr><td>${esc(m.name)}</td>`+ds.map(s=>{ const dd=peek(s); const t=dd&&dd.meds&&dd.meds[m.id]&&dd.meds[m.id].taken;
+    return `<td class="num" style="color:${t?'var(--good)':'var(--muted)'}" title="${t?'taken '+(dd.meds[m.id].time||''):'not logged'}">${t?'✓':'·'}</td>`; }).join('')+'</tr>'; });
+  $('medGrid').innerHTML=h;
+}
+function initMeds(){
+  ['medsAM','medsPM'].forEach(id=>$(id).addEventListener('change',e=>{ const d=day();
+    if(e.target.dataset.id){ const k=e.target.dataset.id; d.meds[k]= e.target.checked? {taken:true,time:nowHM()} : {taken:false}; }
+    else if(e.target.dataset.time){ const k=e.target.dataset.time; d.meds[k].time=e.target.value; }
+    save(); renderAll(); }));
+}
+</script>
+<script>
+/* ================= MEALS & FLUIDS ================= */
+const QUICK=[['Small cup',120],['Cup 8 oz',240],['Mug 10 oz',300],['Bottle 16.9 oz',500],['Can 12 oz',355],['Soup bowl',250],['Ice cream ½ cup',120],['Jell-O cup',120]];
+function renderFood(){
+  const d=peek(cur)||{fluids:[],meals:[]}; const tot=fluidTotal(d), lim=S.settings.fluidMl;
+  $('fluidTotal').textContent=tot.toLocaleString()+' mL';
+  const left=lim-tot;
+  $('fluidSub').innerHTML = `${(tot/29.5735).toFixed(0)} fl oz of ${lim.toLocaleString()} mL limit · ` + (left>=0? `<b>${left.toLocaleString()} mL</b> remaining` : status('crit',`${(-left).toLocaleString()} mL over limit`));
+  const bar=$('fluidBar'); bar.classList.toggle('over',tot>lim); bar.firstElementChild.style.width=Math.min(100,tot/lim*100)+'%';
+  $('fluidQuick').innerHTML=QUICK.map(q=>`<button class="chip" data-ml="${q[1]}" data-w="${q[0]}">${q[0]} · ${q[1]}</button>`).join('');
+  $('fluidList').innerHTML=(d.fluids||[]).map((f,i)=>`<div class="listitem"><span>${to12(f.time)} · ${esc(f.what||'fluid')}</span><span>${f.ml} mL <button class="x" data-fi="${i}" aria-label="remove">×</button></span></div>`).join('') || '<p class="small muted">No fluids logged.</p>';
+  $('mealList').innerHTML=(d.meals||[]).map((m,i)=>`<div class="listitem"><span><b>${esc(m.type)}</b> ${to12(m.time)}<br>${esc(m.desc)}</span><span class="right">${mealNutStr(m)}<button class="x" data-mi="${i}" aria-label="remove">×</button></span></div>`).join('') || '<p class="small muted">No meals logged.</p>';
+  const na=sodiumTotal(d); const tgt=num(S.settings.naMg);
+  $('naTotal').innerHTML = na==null? '—' : na.toLocaleString()+' mg'+(tgt? ` <span class="small muted">of ${tgt.toLocaleString()} target</span>`:'');
+}
+function addFluid(ml,what){ const d=day(); d.fluids.push({ml:Math.round(ml),what,time:nowHM()}); save(); renderAll(); }
+function initFood(){
+  $('fluidQuick').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(b) addFluid(+b.dataset.ml,b.dataset.w); });
+  $('addFluid').onclick=()=>{ let v=num($('flAmt').value); if(!v) return; if($('flUnit').value==='oz') v*=29.5735; addFluid(v,$('flWhat').value||'fluid'); $('flAmt').value=''; $('flWhat').value=''; };
+  $('fluidList').addEventListener('click',e=>{ if(e.target.dataset.fi!=null){ day().fluids.splice(+e.target.dataset.fi,1); save(); renderAll(); } });
+  $('mealList').addEventListener('click',e=>{ if(e.target.dataset.mi!=null){ day().meals.splice(+e.target.dataset.mi,1); save(); renderAll(); } });
+  $('addMeal').onclick=()=>{ const d=day(); const t=$('mlTime').value||nowHM();
+    d.meals.push({type:$('mlType').value,time:t,desc:$('mlDesc').value,na:num($('mlNa').value),kcal:num($('mlKcal').value),carb:num($('mlCarb').value),fib:num($('mlFib').value),pro:num($('mlPro').value),sat:num($('mlSat').value),k:num($('mlK').value)});
+    const fl=num($('mlFl').value); if(fl) d.fluids.push({ml:Math.round(fl),what:$('mlType').value+' (with meal)',time:t});
+    $('mlDesc').value=''; $('mlNa').value=''; $('mlFl').value=''; ['mlKcal','mlCarb','mlFib','mlPro','mlSat','mlK'].forEach(i=>$(i).value=''); save(); renderAll(); };
+}
+
+/* ================= EXERCISE ================= */
+function progWeek(s){ return Math.floor((parseISO(s)-parseISO(S.settings.exStart))/864e5/7); }
+function progMonth(s){ return Math.floor(progWeek(s)/4)+1; }
+function planFor(month){ const p=S.settings.plan.slice().sort((a,b)=>a.m-b.m); let g=p[0]; p.forEach(x=>{ if(x.m<=month) g=x; }); return g; }
+function weekRange(s){ const w=progWeek(s); const a=addDays(S.settings.exStart,w*7); return [a,addDays(a,6)]; }
+function exIn(a,b){ return S.exercise.filter(e=>e.date>=a&&e.date<=b); }
+function renderExercise(){
+  const w=progWeek(cur), mo=progMonth(cur); const g=planFor(Math.max(1,mo)); const [a,b]=weekRange(cur);
+  const list=exIn(a,b); const mins=list.reduce((s,e)=>s+e.min,0); const qual=list.filter(e=>e.min>=g.min).length;
+  $('exLede').innerHTML = w<0? `Your program starts ${fmtDate(S.settings.exStart)}.` :
+    `Program month <b>${mo}</b>, week <b>${w%4+1}</b> (${fmtDate(a)} – ${fmtDate(b)}). Goal: <b>${g.s} sessions × ${g.min} minutes</b> = ${g.s*g.min} min/week.`;
+  const allW=[]; for(let i=0;i<=Math.max(0,w);i++){ const s0=addDays(S.settings.exStart,i*7); const l=exIn(s0,addDays(s0,6)); const gg=planFor(Math.floor(i/4)+1); allW.push(l.filter(e=>e.min>=gg.min).length>=gg.s); }
+  let streak=0; for(let i=allW.length-2;i>=0;i--){ if(allW[i]) streak++; else break; } if(allW[allW.length-1]) streak++;
+  $('exTiles').innerHTML=[
+    ['Sessions this week',`${qual} / ${g.s}`,`sessions of ${g.min}+ min`, qual/g.s],
+    ['Minutes this week',mins,`goal ${g.s*g.min} min`, mins/(g.s*g.min)],
+    ['Weeks goal met',`${allW.filter(Boolean).length} / ${allW.length}`,'since program start',null],
+    ['Current streak',streak,'consecutive weeks on goal',null]
+  ].map(t=>`<div class="card tile"><div class="lbl">${t[0]}</div><div class="val">${t[1]}</div><div class="sub">${t[2]}</div>${t[3]!=null?`<div class="bar"><i style="width:${Math.min(100,t[3]*100)}%"></i></div>`:''}</div>`).join('');
+  // weekly bars: last 12 program weeks
+  const pts=[]; for(let i=Math.max(0,w-11);i<=Math.max(0,w);i++){ const s0=addDays(S.settings.exStart,i*7); const gg=planFor(Math.floor(i/4)+1);
+    pts.push({label:'Wk '+(i+1),x:s0,y:exIn(s0,addDays(s0,6)).reduce((s,e)=>s+e.min,0),goal:gg.s*gg.min}); }
+  barChart($('chEx'),pts,{unit:'min',goalKey:'goal',goalLabel:'goal'});
+  $('exList').innerHTML = S.exercise.slice().sort((x,y)=>y.date.localeCompare(x.date)).slice(0,40).map(e=>`<div class="listitem"><span><b>${fmtDate(e.date)}</b> · ${esc(e.type)}${e.rpe?` · RPE ${e.rpe}`:''}${e.hr1||e.hr2?` · HR ${e.hr1||'?'}→${e.hr2||'?'}`:''}${typeof sweatOf==='function'&&sweatOf(e)!=null?` · sweat ≈ ${sweatOf(e).toLocaleString()} mL`:''}${e.note?`<br><span class="muted">${esc(e.note)}</span>`:''}</span><span>${e.min} min <button class="x" data-xi="${e.id}">×</button></span></div>`).join('') || '<p class="small muted">No sessions yet.</p>';
+  $('planTable').innerHTML='<tr><th>Program month</th><th class="num">Sessions / week</th><th class="num">Minutes / session</th><th class="num">Weekly minutes</th></tr>'+
+    S.settings.plan.slice().sort((a,b)=>a.m-b.m).map(p=>`<tr ${p.m===mo?'style="background:var(--yale-tint)"':''}><td>Month ${p.m}${p.m===mo?' (current)':''}</td><td class="num">${p.s}</td><td class="num">${p.min}</td><td class="num">${p.s*p.min}</td></tr>`).join('');
+}
+function initExercise(){
+  $('addEx').onclick=()=>{ const m=num($('exMin').value); if(!m) return;
+    S.exercise.push({id:Date.now(),date:cur,type:$('exType').value,min:m,rpe:num($('exRPE').value),hr1:num($('exHR1').value),hr2:num($('exHR2').value),note:$('exNote').value,wB:num($('exWB').value),wA:num($('exWA').value),drink:num($('exDrink').value)});
+    { const dk=num($('exDrink').value); if(dk) day().fluids.push({ml:Math.round(dk),what:'During exercise',time:nowHM()}); }
+    ['exMin','exRPE','exHR1','exHR2','exNote','exWB','exWA','exDrink'].forEach(i=>$(i).value=''); save(); renderAll(); };
+  $('exList').addEventListener('click',e=>{ if(e.target.dataset.xi){ S.exercise=S.exercise.filter(x=>String(x.id)!==e.target.dataset.xi); save(); renderAll(); } });
+}
+
+/* ================= GUIDE ================= */
+function renderGuide(){
+  const li=a=>'<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';
+  $('guideCross').innerHTML=`<details open><summary>${CROSS.title}</summary><div class="body grid g3">
+    <div><h4>Avoid (OTC &amp; supplements)</h4>${li(CROSS.avoid)}</div>
+    <div><h4>Usually OK, confirm with pharmacist</h4>${li(CROSS.usually)}</div>
+    <div><h4>Food &amp; drink</h4>${li(CROSS.food)}</div></div></details>`;
+  $('guideMeds').innerHTML=GUIDE.map(g=>`<details><summary>${esc(g.name)} <span>· ${esc(g.cls)}</span></summary><div class="body">
+    <p><b>Purpose.</b> ${esc(g.purpose)}</p><p><b>How to take.</b> ${esc(g.how)}</p>
+    <div class="grid g2"><div><h4>Possible side effects</h4>${li(g.side)}</div><div><h4>Call your care team</h4>${li(g.call)}</div>
+    <div><h4>OTC &amp; supplements to avoid</h4>${li(g.otc)}</div><div><h4>Prescription interactions</h4>${li(g.rx)}</div></div>
+    <h4>Food &amp; drink</h4>${li(g.food)}</div></details>`).join('');
+}
+
+/* ================= SETTINGS & DATA ================= */
+const SETMAP={setWUnit:'wUnit',setFluid:'fluidMl',setWDay:'wDay',setWWeek:'wWeek',setSysHi:'sysHi',setDiaHi:'diaHi',setSysLo:'sysLo',setHrLo:'hrLo',setHrHi:'hrHi',setSpo2:'spo2Lo',setNa:'naMg',setExStart:'exStart'};
+function renderSettings(){
+  Object.entries(SETMAP).forEach(([id,k])=>$(id).value=S.settings[k]);
+  $('planEdit').innerHTML='<tr><th>Month</th><th>Sessions/wk</th><th>Min/session</th><th></th></tr>'+S.settings.plan.map((p,i)=>
+    `<tr><td><input type="number" data-p="${i}" data-k="m" value="${p.m}" ${p.m===1?'readonly':''}></td><td><input type="number" data-p="${i}" data-k="s" value="${p.s}" ${p.m===1?'readonly':''}></td><td><input type="number" data-p="${i}" data-k="min" value="${p.min}" ${p.m===1?'readonly':''}></td><td>${p.m===1?'<span class="small muted">fixed</span>':`<button class="x" data-pd="${i}">×</button>`}</td></tr>`).join('');
+}
+function initSettings(){
+  $('saveSettings').onclick=()=>{ Object.entries(SETMAP).forEach(([id,k])=>{ const v=$(id).value; S.settings[k]= (k==='wUnit'||k==='exStart')? v : (v===''?'':Number(v)); });
+    document.querySelectorAll('#planEdit input').forEach(inp=>{ S.settings.plan[+inp.dataset.p][inp.dataset.k]=Number(inp.value); });
+    save(); $('setMsg').textContent='Saved ✓'; setTimeout(()=>$('setMsg').textContent='',1500); renderAll(); };
+  $('addPlanRow').onclick=()=>{ const last=S.settings.plan.reduce((a,b)=>a.m>b.m?a:b); S.settings.plan.push({m:last.m+1,s:last.s,min:last.min+5}); renderSettings(); };
+  $('planEdit').addEventListener('click',e=>{ if(e.target.dataset.pd!=null){ S.settings.plan.splice(+e.target.dataset.pd,1); renderSettings(); } });
+  $('expJSON').onclick=()=>download('health-ledger-backup-'+todayISO()+'.json',JSON.stringify(S,null,1),'application/json');
+  $('expCSV').onclick=()=>download('health-ledger-daily-'+todayISO()+'.csv',toCSV(),'text/csv');
+  $('printBtn').onclick=()=>window.print();
+  $('impFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
+    rd.onload=()=>{ try{ const o=JSON.parse(rd.result); if(!o.days) throw 0; uiConfirm('Replace everything on this device with this backup? Export a backup of the current data first if you might need it.',{ok:'Replace'}).then(ok=>{ if(!ok) return; S=o; save(); load(); $('impMsg').textContent='Restored ✓'; renderAll(); }); return; }catch(err){ $('impMsg').textContent='That file is not a valid backup.'; } };
+    rd.readAsText(f); };
+  $('clearBtn').onclick=()=>{ if(confirm('Erase ALL logged data on this device? Export a backup first if you need it.')){ const st=S.settings; S=JSON.parse(JSON.stringify(DEFAULTS)); S.settings=st; save(); renderAll(); } };
+  $('demoBtn').onclick=()=>{ if(Object.keys(S.days).length && !confirm('This adds sample data on top of what is here. Continue?')) return; makeDemo(); save(); renderAll(); };
+}
+function download(name,text,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
+function toCSV(){
+  const head=['date','weight_'+S.settings.wUnit,'weight_time','bp1_sys','bp1_dia','bp1_pulse','bp1_time','bp2_sys','bp2_dia','bp2_pulse','bp2_time','final_sys','final_dia','final_pulse','spo2','fluid_ml','sodium_mg','doses_taken','doses_total','exercise_min','symptoms','notes','bathroom_trips','est_output_trips_ml','est_output_balance_ml','kcal','carbs_g','fiber_g','protein_g','satfat_g','potassium_mg'];
+  const rows=Object.keys(S.days).sort().map(s=>{ const d=S.days[s], b1=d.bp1||{}, b2=d.bp2||{}, f=finalBP(d)||{};
+    const ex=S.exercise.filter(e=>e.date===s).reduce((a,e)=>a+e.min,0);
+    return [s,d.weight,d.weightTime,b1.sys,b1.dia,b1.pulse,b1.time,b2.sys,b2.dia,b2.pulse,b2.time,f.sys,f.dia,f.pulse,d.spo2,fluidTotal(d),sodiumTotal(d),dosesTaken(d),MEDS.length,ex,(d.symptoms||[]).join('; '),d.notes,(d.trips||[]).length||'',(typeof tripEst==='function'?tripEst(d):null),(typeof balanceEst==='function'?balanceEst(s):null),nutTotal(d,'kcal'),nutTotal(d,'carb'),nutTotal(d,'fib'),nutTotal(d,'pro'),nutTotal(d,'sat'),nutTotal(d,'k')]
+      .map(v=>v==null?'':'"'+String(v).replace(/"/g,'""')+'"').join(','); });
+  return head.join(',')+'\n'+rows.join('\n');
+}
+function makeDemo(){
+  let w=198.4; const start=addDays(todayISO(),-44); S.settings.exStart=start;
+  for(let i=0;i<45;i++){ const s=addDays(start,i); const d=day(s); const rnd=()=>Math.random()-.5;
+    w+= -0.06 + rnd()*0.9 + (i===30?2.4:0); d.weight=+w.toFixed(1); d.weightTime='06:'+pad(40+Math.floor(Math.random()*15));
+    const amt='07:'+pad(Math.floor(Math.random()*20)); MEDS.forEach(m=>{ if(Math.random()<.95) d.meds[m.id]={taken:true,time:m.slot==='AM'?amt:'19:'+pad(Math.floor(Math.random()*25))}; });
+    const sys=Math.round(128-i*0.15+rnd()*18), dia=Math.round(78+rnd()*10), p=Math.round(64+rnd()*10);
+    d.bp1={sys,dia,pulse:p,time:'09:'+pad(10+Math.floor(Math.random()*15)),arm:'Left, seated'};
+    if(sys>=S.settings.sysHi) d.bp2={sys:sys-Math.round(6+Math.random()*8),dia:dia-3,pulse:p-2,time:'09:40'};
+    d.spo2=Math.round(96+rnd()*3); d.fluids=[];
+    let tot=0; const target=1700+rnd()*700; while(tot<target){ const ml=[240,300,355,500,120][Math.floor(Math.random()*5)]; tot+=ml; d.fluids.push({ml,what:'water',time:'12:00'}); }
+    d.meals=[{type:'Breakfast',time:'08:00',desc:'Oatmeal, berries',na:150},{type:'Lunch',time:'12:30',desc:'Salad, grilled chicken',na:Math.round(500+Math.random()*300)},{type:'Dinner',time:'18:30',desc:'Fish, rice, vegetables',na:Math.round(500+Math.random()*400)}];
+    if(i%7===1||i%7===3||i%7===5){ if(Math.random()<.85) S.exercise.push({id:Date.now()+i,date:s,type:['Walking','Tai chi','Stationary bike'][i%3],min:[40,42,45,35][Math.floor(Math.random()*4)],rpe:12,hr1:66,hr2:92,note:''}); }
+  }
+}
+</script>
+<script>
+/* ================= CHARTS (inline SVG, offline) ================= */
+const W=560,H=220,M={l:44,r:14,t:12,b:28};
+function niceRange(lo,hi){ if(lo===hi){lo-=1;hi+=1;} const pad=(hi-lo)*0.12; return [lo-pad,hi+pad]; }
+function ticks(lo,hi,n=4){ const step=Math.pow(10,Math.floor(Math.log10((hi-lo)/n))); const err=(hi-lo)/n/step; const st=step*(err>=5?10:err>=2?5:err>=1.5?2:1);
+  const out=[]; for(let v=Math.ceil(lo/st)*st; v<=hi+1e-9; v+=st) out.push(+v.toFixed(6)); return out; }
+function frame(el,lo,hi,xs,fmtX,unit){
+  const y=v=>M.t+(H-M.t-M.b)*(1-(v-lo)/(hi-lo));
+  let g=ticks(lo,hi).map(t=>`<line x1="${M.l}" x2="${W-M.r}" y1="${y(t)}" y2="${y(t)}" stroke="#E9E4D8" stroke-width="1"/><text x="${M.l-6}" y="${y(t)+4}" font-size="11" text-anchor="end" fill="#7A766C">${t}</text>`).join('');
+  const step=Math.max(1,Math.ceil(xs.length/7));
+  g+=xs.map((s,i)=> i%step===0||i===xs.length-1? `<text x="${xs.length>1?M.l+(W-M.l-M.r)*i/(xs.length-1):W/2}" y="${H-8}" font-size="11" text-anchor="middle" fill="#7A766C">${fmtX(s)}</text>`:'').join('');
+  return {y,g};
+}
+function lineChart(el,series,o={}){
+  const xs=o.dates; const vals=series.flatMap(s=>s.pts.map(p=>p.y)).concat((o.refs||[]).map(r=>r.y)).filter(v=>v!=null);
+  if(!series.some(s=>s.pts.some(p=>p.y!=null))){ el.innerHTML='<p class="small muted">No data in this range yet.</p>'; return; }
+  let [lo,hi]=niceRange(Math.min(...vals),Math.max(...vals)); if(o.yMax!=null) hi=Math.min(hi,o.yMax);
+  const fx=s=>parseISO(s).toLocaleDateString(undefined,{month:'numeric',day:'numeric'});
+  const {y,g}=frame(el,lo,hi,xs,fx); const x=i=>xs.length>1? M.l+(W-M.l-M.r)*i/(xs.length-1) : W/2;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label||'')}">${g}`;
+  (o.refs||[]).forEach(r=>{ svg+=`<line x1="${M.l}" x2="${W-M.r}" y1="${y(r.y)}" y2="${y(r.y)}" stroke="#7A766C" stroke-dasharray="4 4" stroke-width="1"/><text x="${W-M.r}" y="${y(r.y)-4}" font-size="10" text-anchor="end" fill="#7A766C">${esc(r.label)}</text>`; });
+  series.forEach(s=>{ const idx=new Map(s.pts.map(p=>[p.x,p.y])); let path='',pen=false;
+    xs.forEach((d,i)=>{ const v=idx.get(d); if(v==null){pen=false;return;} path+=(pen?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1); pen=true; });
+    svg+=`<path d="${path}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(xs.length<=31) xs.forEach((d,i)=>{ const v=idx.get(d); if(v!=null) svg+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${s.color}" stroke="#FFFDF8" stroke-width="2"/>`; });
+    if(s.avg){ const a=s.avg; svg+=`<path d="${a}" fill="none" stroke="${s.color}" stroke-width="1" opacity=".45"/>`; }
+  });
+  svg+=`<line class="xh" x1="0" x2="0" y1="${M.t}" y2="${H-M.b}" stroke="#4A4740" stroke-width="1" style="display:none"/><rect x="${M.l}" y="${M.t}" width="${W-M.l-M.r}" height="${H-M.t-M.b}" fill="transparent"/></svg><div class="tip"></div>`;
+  el.innerHTML=svg; const sv=el.querySelector('svg'), tip=el.querySelector('.tip'), xh=el.querySelector('.xh');
+  const maps=series.map(s=>new Map(s.pts.map(p=>[p.x,p.y])));
+  sv.addEventListener('mousemove',e=>{ const rc=sv.getBoundingClientRect(); const px=(e.clientX-rc.left)*W/rc.width;
+    const i=Math.max(0,Math.min(xs.length-1,Math.round((px-M.l)/((W-M.l-M.r)/Math.max(1,xs.length-1))))); const X=x(i);
+    xh.setAttribute('x1',X); xh.setAttribute('x2',X); xh.style.display='';
+    tip.innerHTML=`<b>${fmtDate(xs[i])}</b><br>`+series.map((s,k)=>`<i style="display:inline-block;width:10px;height:3px;background:${s.color};vertical-align:middle;margin-right:4px"></i>${s.name}: <b>${maps[k].get(xs[i])!=null? r(maps[k].get(xs[i]),o.dec||0):'—'}</b> ${o.unit||''}`).join('<br>');
+    tip.style.display='block'; const left=X*rc.width/W; tip.style.left=Math.min(rc.width-tip.offsetWidth-4,Math.max(0,left+10))+'px'; tip.style.top='8px'; });
+  sv.addEventListener('mouseleave',()=>{ tip.style.display='none'; xh.style.display='none'; });
+}
+function barChart(el,pts,o={}){
+  if(!pts.length||!pts.some(p=>p.y)){ el.innerHTML='<p class="small muted">No data in this range yet.</p>'; return; }
+  const goals=pts.map(p=>o.goalKey?p[o.goalKey]:o.goal).filter(v=>v!=null);
+  const hi=Math.max(...pts.map(p=>p.y||0),...goals)*1.12, lo=0;
+  const fx=s=>{ const p=pts.find(q=>q.x===s); return p&&p.label? p.label : parseISO(s).toLocaleDateString(undefined,{month:'numeric',day:'numeric'}); };
+  const xs=pts.map(p=>p.x); const {y,g}=frame(el,lo,hi,xs,fx);
+  const bw=(W-M.l-M.r)/pts.length; const cx=i=>M.l+bw*(i+.5);
+  // re-place x labels under bar centers
+  let svg=`<svg viewBox="0 0 ${W} ${H}">`+g.replace(new RegExp(`<text x="[\\d.]+" y="${H-8}"[^>]*>[^<]*<\\/text>`,'g'),'');
+  const step=Math.max(1,Math.ceil(pts.length/8));
+  pts.forEach((p,i)=>{ if(i%step===0||i===pts.length-1) svg+=`<text x="${cx(i)}" y="${H-8}" font-size="11" text-anchor="middle" fill="#7A766C">${esc(fx(p.x))}</text>`; });
+  const wbar=Math.max(3,Math.min(28,bw-2));
+  pts.forEach((p,i)=>{ const v=p.y||0; const gl=o.goalKey?p[o.goalKey]:o.goal; const over=o.overIsBad&&gl!=null&&v>gl;
+    const top=y(v), h=Math.max(0,y(0)-top); const col= over? '#A4161A' : (o.color||'#1F5A9E');
+    if(h>0) svg+=`<path d="M${cx(i)-wbar/2},${y(0)} V${top+Math.min(4,h)} Q${cx(i)-wbar/2},${top} ${cx(i)-wbar/2+Math.min(4,wbar/2)},${top} H${cx(i)+wbar/2-Math.min(4,wbar/2)} Q${cx(i)+wbar/2},${top} ${cx(i)+wbar/2},${top+Math.min(4,h)} V${y(0)} Z" fill="${col}"/>`;
+    if(o.goalKey&&gl!=null) svg+=`<line x1="${cx(i)-bw/2+1}" x2="${cx(i)+bw/2-1}" y1="${y(gl)}" y2="${y(gl)}" stroke="#4A4740" stroke-dasharray="3 3" stroke-width="1.2"/>`;
+    svg+=`<rect class="hit" data-i="${i}" x="${cx(i)-bw/2}" y="${M.t}" width="${bw}" height="${H-M.t-M.b}" fill="transparent"/>`; });
+  if(o.goal!=null) svg+=`<line x1="${M.l}" x2="${W-M.r}" y1="${y(o.goal)}" y2="${y(o.goal)}" stroke="#4A4740" stroke-dasharray="4 4" stroke-width="1.2"/><text x="${W-M.r}" y="${y(o.goal)-4}" font-size="10" text-anchor="end" fill="#4A4740">${esc(o.goalLabel||'goal')}</text>`;
+  svg+='</svg><div class="tip"></div>'; el.innerHTML=svg;
+  const sv=el.querySelector('svg'), tip=el.querySelector('.tip');
+  sv.addEventListener('mousemove',e=>{ const t=e.target.closest('.hit'); if(!t){tip.style.display='none';return;} const p=pts[+t.dataset.i]; const gl=o.goalKey?p[o.goalKey]:o.goal;
+    tip.innerHTML=`<b>${p.label||fmtDate(p.x)}</b><br>${r(p.y,o.dec||0)} ${o.unit||''}${gl!=null?` · ${o.goalLabel||'goal'} ${r(gl,0)}`:''}${o.overIsBad&&gl!=null&&p.y>gl?'<br>■ over limit':''}`;
+    const rc=sv.getBoundingClientRect(); tip.style.display='block'; tip.style.left=Math.min(rc.width-tip.offsetWidth-4,(cx(+t.dataset.i)*rc.width/W)+8)+'px'; tip.style.top='8px'; });
+  sv.addEventListener('mouseleave',()=>tip.style.display='none');
+}
+
+/* ================= DASHBOARD ================= */
+let range=7;
+function datesBack(end,n){ const a=[]; for(let i=n-1;i>=0;i--) a.push(addDays(end,-i)); return a; }
+function series(dates,fn){ return dates.map(s=>({x:s,y:(v=>v==null?null:v)(peek(s)?fn(peek(s)):null)})); }
+function agg(dates){
+  const g=(fn)=>dates.map(s=>peek(s)).filter(Boolean).map(fn).filter(v=>v!=null);
+  const wt=g(d=>d.weight), sy=g(d=>finalBP(d)&&finalBP(d).sys), di=g(d=>finalBP(d)&&finalBP(d).dia), pu=g(d=>finalBP(d)&&finalBP(d).pulse), sp=g(d=>d.spo2);
+  const logged=dates.filter(s=>hasAny(peek(s)));
+  const fl=logged.map(s=>fluidTotal(peek(s))).filter(v=>v>0);
+  const ad=logged.map(s=>adherence(peek(s)));
+  const na=g(d=>sodiumTotal(d));
+  const ex=S.exercise.filter(e=>e.date>=dates[0]&&e.date<=dates[dates.length-1]);
+  const firstW=dates.map(s=>peek(s)&&peek(s).weight).find(v=>v!=null), lastW=dates.slice().reverse().map(s=>peek(s)&&peek(s).weight).find(v=>v!=null);
+  return {n:logged.length,wt,sy,di,pu,sp,fl,ad,na,exMin:ex.reduce((a,e)=>a+e.min,0),exN:ex.length,over:fl.filter(v=>v>S.settings.fluidMl).length,
+    wChange:(firstW!=null&&lastW!=null)?lastW-firstW:null};
+}
+function slopePerWeek(dates,fn){ const pts=dates.map((s,i)=>[i,peek(s)?fn(peek(s)):null]).filter(p=>p[1]!=null); if(pts.length<3) return null;
+  const mx=mean(pts.map(p=>p[0])), my=mean(pts.map(p=>p[1])); let num_=0,den=0; pts.forEach(([x,y])=>{num_+=(x-mx)*(y-my);den+=(x-mx)**2;}); return den? num_/den*7 : null; }
+function renderDash(){
+  const st=S.settings, d=peek(cur), u=st.wUnit; $('dashDateLbl').textContent='· '+fmtDate(cur,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const fb=finalBP(d), y=peek(addDays(cur,-1)); const a7=agg(datesBack(cur,7)), a30=agg(datesBack(cur,30));
+  const wd=(d&&d.weight!=null&&y&&y.weight!=null)? d.weight-y.weight : null;
+  const tot=fluidTotal(d), taken=dosesTaken(d);
+  const g=planFor(Math.max(1,progMonth(cur))); const [wa,wb]=weekRange(cur); const exl=exIn(wa,wb); const q=exl.filter(e=>e.min>=g.min).length;
+  const tile=(l,v,s,b,over)=>`<div class="card tile"><div class="lbl">${l}</div><div class="val">${v}</div><div class="sub">${s}</div>${b!=null?`<div class="bar ${over?'over':''}"><i style="width:${Math.min(100,b*100)}%"></i></div>`:''}</div>`;
+  $('tiles').innerHTML=[
+    tile('Weight',d&&d.weight!=null? d.weight.toFixed(1)+` <span class="small">${u}</span>`:'—', wd!=null? `${wd>0?'+':''}${wd.toFixed(1)} vs yesterday · 7-day avg ${r(mean(a7.wt),1)}`:`7-day avg ${r(mean(a7.wt),1)}`),
+    tile('Blood pressure',fb? `${fb.sys}/${fb.dia}`:'—', fb? `${d.bp2&&d.bp2.sys?'recheck':'first reading'} · 7-day avg ${r(mean(a7.sy))}/${r(mean(a7.di))}`:`7-day avg ${r(mean(a7.sy))}/${r(mean(a7.di))}`),
+    tile('Pulse',fb&&fb.pulse!=null? fb.pulse+' <span class="small">bpm</span>':'—',`7-day avg ${r(mean(a7.pu))}`),
+    tile('SpO₂',d&&d.spo2!=null? d.spo2+'%':'—',`7-day avg ${r(mean(a7.sp),1)}%`),
+    tile('Fluids',tot.toLocaleString()+' <span class="small">mL</span>',`limit ${st.fluidMl.toLocaleString()} · ${a7.over} of last 7 days over`, tot/st.fluidMl, tot>st.fluidMl),
+    tile('Medicines',`${taken} / ${MEDS.length}`,`doses today · 30-day adherence ${r(mean(a30.ad))}%`, taken/MEDS.length),
+    tile('Exercise this week',`${q} / ${g.s}`,`sessions of ${g.min}+ min · ${exl.reduce((a,e)=>a+e.min,0)} min`, q/g.s),
+    tile('30-day weight change',a30.wChange!=null? `${a30.wChange>0?'+':''}${a30.wChange.toFixed(1)} <span class="small">${u}</span>`:'—',`OLS trend ${r(slopePerWeek(datesBack(cur,30),x=>x.weight),2)} ${u}/week`)
+  ].join('');
+  // alerts
+  const al=[]; const wf=weightFlag(cur); if(/status warn/.test(wf)) al.push(wf.replace(/<span class="small">.*?<\/span>\s*/,''));
+  if(fb){ const f=bpFlag(fb); if(!/good/.test(f)) al.push(f); const h=hrFlag(fb.pulse); if(h) al.push(h); }
+  if(d&&d.spo2!=null){ const s=spo2Flag(d.spo2); if(!/good/.test(s)) al.push(s); }
+  if(tot>st.fluidMl) al.push(status('crit',`Fluids ${(tot-st.fluidMl).toLocaleString()} mL over limit`));
+  const red=['Short of breath','Breathless lying flat','Chest discomfort','Bruising / bleeding','Dizzy / light-headed'];
+  (d&&d.symptoms||[]).filter(s=>red.includes(s)).forEach(s=>al.push(status('warn','Symptom logged: '+s)));
+  if(cur===todayISO()&&new Date().getHours()>=21&&d&&MEDS.some(m=>m.slot==='PM'&&!(d.meds[m.id]&&d.meds[m.id].taken))) al.push(status('warn','Evening medicines not all logged'));
+  $('alerts').innerHTML= al.length? al.join('') : (hasAny(d)? status('good','No alerts for this day') : '<span class="small muted">Nothing logged for this day yet. Start with the Morning Check-in tab.</span>');
+  // charts
+  const ds=datesBack(cur,range);
+  lineChart($('chWeight'),[{name:'Weight',color:'#1F5A9E',pts:series(ds,x=>x.weight)}],{dates:ds,unit:u,dec:1,label:'Weight trend'});
+  lineChart($('chBP'),[{name:'Systolic',color:'#2a78d6',pts:series(ds,x=>finalBP(x)&&finalBP(x).sys)},{name:'Diastolic',color:'#eb6834',pts:series(ds,x=>finalBP(x)&&finalBP(x).dia)}],
+    {dates:ds,unit:'mmHg',refs:[{y:st.sysHi,label:'sys high '+st.sysHi},{y:st.diaHi,label:'dia high '+st.diaHi}],label:'Blood pressure trend'});
+  lineChart($('chPulse'),[{name:'Pulse',color:'#1F5A9E',pts:series(ds,x=>finalBP(x)&&finalBP(x).pulse)}],{dates:ds,unit:'bpm',refs:[{y:st.hrLo,label:'low '+st.hrLo}]});
+  lineChart($('chSpo2'),[{name:'SpO₂',color:'#1F5A9E',pts:series(ds,x=>x.spo2)}],{dates:ds,unit:'%',refs:[{y:st.spo2Lo,label:'low '+st.spo2Lo}],yMax:100.5});
+  barChart($('chFluid'),ds.map(s=>({x:s,y:peek(s)?fluidTotal(peek(s)):0})),{unit:'mL',goal:st.fluidMl,goalLabel:'limit '+st.fluidMl,overIsBad:true});
+  barChart($('chAdh'),ds.map(s=>({x:s,y:hasAny(peek(s))?adherence(peek(s)):0})),{unit:'%',goal:100,goalLabel:'100%'});
+  // summary stats
+  const D7=datesBack(cur,7), D30=datesBack(cur,30);
+  const rowsDef=[['Weight ('+u+')',x=>x.weight,1],['Systolic (final)',x=>finalBP(x)&&finalBP(x).sys,0],['Diastolic (final)',x=>finalBP(x)&&finalBP(x).dia,0],['Pulse',x=>finalBP(x)&&finalBP(x).pulse,0],['SpO₂ %',x=>x.spo2,1],['Fluid mL',x=>{const t=fluidTotal(x);return t||null;},0],['Adherence %',x=>hasAny(x)?adherence(x):null,0],['Sodium mg',x=>sodiumTotal(x),0],['Calories',x=>nutTotal(x,'kcal'),0],['Carbs g',x=>nutTotal(x,'carb'),0],['Fiber g',x=>nutTotal(x,'fib'),1],['Protein g',x=>nutTotal(x,'pro'),0],['Sat fat g',x=>nutTotal(x,'sat'),1],['Potassium mg',x=>nutTotal(x,'k'),0]];
+  const vals=(ds_,fn)=>ds_.map(s=>peek(s)?fn(peek(s)):null).filter(v=>v!=null);
+  $('statTable').innerHTML='<tr><th>Measure</th><th class="num">Today</th><th class="num">7-d mean</th><th class="num">7-d SD</th><th class="num">7-d range</th><th class="num">30-d mean</th><th class="num">30-d SD</th><th class="num">30-d range</th><th class="num">Trend / wk (30-d OLS)</th><th class="num">n (30 d)</th></tr>'+
+    rowsDef.map(([n,fn,dc])=>{ const t=d?fn(d):null, v7=vals(D7,fn), v30=vals(D30,fn), sl=slopePerWeek(D30,fn);
+      return `<tr><td>${n}</td><td class="num">${r(t,dc)}</td><td class="num">${r(mean(v7),dc)}</td><td class="num">${r(sd(v7),dc+1)}</td><td class="num">${v7.length?r(Math.min(...v7),dc)+'–'+r(Math.max(...v7),dc):'—'}</td><td class="num">${r(mean(v30),dc)}</td><td class="num">${r(sd(v30),dc+1)}</td><td class="num">${v30.length?r(Math.min(...v30),dc)+'–'+r(Math.max(...v30),dc):'—'}</td><td class="num">${sl==null?'—':(sl>0?'+':'')+sl.toFixed(dc+1)}</td><td class="num">${v30.length}</td></tr>`; }).join('');
+  // weekly (Mon–Sun)
+  const dow=(parseISO(cur).getDay()+6)%7; const mon0=addDays(cur,-dow); let prevW=null; const wk=[];
+  for(let i=7;i>=0;i--){ const a=addDays(mon0,-7*i); wk.push({a,ds:datesBack(addDays(a,6),7)}); }
+  const head='<tr><th>Period</th><th class="num">Days logged</th><th class="num">Avg weight</th><th class="num">Δ weight</th><th class="num">Avg BP</th><th class="num">Avg pulse</th><th class="num">Avg SpO₂</th><th class="num">Avg fluid mL</th><th class="num">Days over limit</th><th class="num">Adherence</th><th class="num">Exercise</th></tr>';
+  const rowOf=(lbl,A,prev)=>{ const mw=mean(A.wt); const dw=(mw!=null&&prev!=null)? mw-prev:null;
+    return [`<tr><td>${lbl}</td><td class="num">${A.n}</td><td class="num">${r(mw,1)}</td><td class="num">${dw==null?'—':(dw>0?'+':'')+dw.toFixed(1)}</td><td class="num">${A.sy.length?r(mean(A.sy))+'/'+r(mean(A.di)):'—'}</td><td class="num">${r(mean(A.pu))}</td><td class="num">${r(mean(A.sp),1)}</td><td class="num">${r(mean(A.fl))}</td><td class="num">${A.over}</td><td class="num">${A.ad.length?r(mean(A.ad))+'%':'—'}</td><td class="num">${A.exMin} min / ${A.exN}</td></tr>`, mw]; };
+  $('weekTable').innerHTML=head+wk.map(w=>{ const [h,mw]=rowOf('Week of '+fmtDate(w.a,{month:'short',day:'numeric'}),agg(w.ds),prevW); if(mw!=null) prevW=mw; return h; }).reverse().join('');
+  // monthly
+  const c=parseISO(cur); let prevM=null; const ms=[];
+  for(let i=5;i>=0;i--){ const f=new Date(c.getFullYear(),c.getMonth()-i,1), l=new Date(c.getFullYear(),c.getMonth()-i+1,0); const dsm=[]; for(let x=new Date(f);x<=l;x.setDate(x.getDate()+1)) dsm.push(iso(x)); ms.push({f,dsm}); }
+  $('monthTable').innerHTML=head.replace('Period','Month')+ms.map(m=>{ const [h,mw]=rowOf(m.f.toLocaleDateString(undefined,{month:'long',year:'numeric'}),agg(m.dsm),prevM); if(mw!=null) prevM=mw; return h; }).reverse().join('');
+}
+
+/* ================= INIT ================= */
+function renderAll(){ renderDash(); renderMorning(); renderMeds(); renderFood(); renderExercise(); renderSettings(); }
+document.addEventListener('DOMContentLoaded',()=>{
+  load(); initNav(); initMorning(); initMeds(); initFood(); initExercise(); initSettings(); renderGuide();
+  $('rangeSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; range=+b.dataset.r; document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.toggle('on',x===b)); renderDash(); });
+  setDate(todayISO());
+});
+</script>
+<script>
+
+/* ===== Iteration 1: exercised-before-BP flag ===== */
+(function(){
+  const _renderMorning = renderMorning;
+  renderMorning = function(){ _renderMorning(); const d=peek(cur)||{}; $('exBefore').checked=!!d.exBeforeBP; };
+  const _initMorning = initMorning;
+  initMorning = function(){ _initMorning();
+    $('exBefore').addEventListener('change',e=>{ day().exBeforeBP=e.target.checked; save(); renderAll(); }); };
+  const _makeDemo = makeDemo;
+  makeDemo = function(){ _makeDemo(); S.exercise.forEach((e,i)=>{ if(i%2===0){ const d=day(e.date); d.exBeforeBP=true; } }); };
+  const _toCSV = toCSV;
+  toCSV = function(){ const lines=_toCSV().split('\n'); const keys=Object.keys(S.days).sort();
+    return lines.map((l,i)=> i===0? l+',exercised_before_bp' : l+',"'+(S.days[keys[i-1]]&&S.days[keys[i-1]].exBeforeBP?'yes':'')+'"').join('\n'); };
+
+  function welch(a,b){ if(a.length<2||b.length<2) return null; const va=sd(a)**2/a.length, vb=sd(b)**2/b.length; return (va+vb)? (mean(a)-mean(b))/Math.sqrt(va+vb) : null; }
+  function groupStats(dates,pred){ const g={sys:[],dia:[],pul:[]}; dates.forEach(s=>{ const d=peek(s), b=finalBP(d); if(!b||!pred(s,d)) return;
+    g.sys.push(b.sys); g.dia.push(b.dia); if(b.pulse!=null) g.pul.push(b.pulse); }); return g; }
+  function rows(label,la,lb,A,B){
+    const f=(g)=>`${g.sys.length}`, m=(g,k)=>r(mean(g[k]));
+    const diff=(k)=>{ const a=mean(A[k]),b=mean(B[k]); return (a==null||b==null)?'—':((a-b)>0?'+':'')+(a-b).toFixed(1); };
+    const t=welch(A.sys,B.sys);
+    return `<tr><td rowspan="2"><b>${label}</b></td><td>${la}</td><td class="num">${f(A)}</td><td class="num">${m(A,'sys')}/${m(A,'dia')}</td><td class="num">${m(A,'pul')}</td><td class="num" rowspan="2">${diff('sys')} / ${diff('dia')}</td><td class="num" rowspan="2">${t==null?'—':t.toFixed(2)}</td></tr>
+      <tr><td>${lb}</td><td class="num">${f(B)}</td><td class="num">${m(B,'sys')}/${m(B,'dia')}</td><td class="num">${m(B,'pul')}</td></tr>`; }
+  const _renderDash = renderDash;
+  renderDash = function(){ _renderDash();
+    const ds=datesBack(cur,90); const exDates=new Set(S.exercise.map(e=>e.date));
+    const A1=groupStats(ds,(s,d)=>d.exBeforeBP), B1=groupStats(ds,(s,d)=>!d.exBeforeBP);
+    const A2=groupStats(ds,(s,d)=>!d.exBeforeBP&&exDates.has(addDays(s,-1))), B2=groupStats(ds,(s,d)=>!d.exBeforeBP&&!exDates.has(addDays(s,-1)));
+    $('exBpTable').innerHTML='<tr><th>Comparison</th><th>Group</th><th class="num">Mornings</th><th class="num">Avg BP</th><th class="num">Avg pulse</th><th class="num">Difference (sys / dia)</th><th class="num">Welch t (systolic)</th></tr>'+
+      rows('Same morning','Exercised before BP','Did not',A1,B1)+rows('Carry-over','Morning after an exercise day','Morning after a rest day',A2,B2);
+    const small=[A1,B1,A2,B2].some(g=>g.sys.length<5);
+    $('exBpNote').textContent=(small?'Fewer than 5 mornings in a group: treat the difference as anecdotal for now. ':'')+'A negative difference means lower BP in the first group. |t| above about 2 suggests the gap is larger than day-to-day noise. "Carry-over" excludes mornings flagged as exercised-before-BP.';
+  };
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 2: other readings ===== */
+(function(){
+  function extras(d){ return (d&&d.extra)||[]; }
+  function xFlags(x){ const out=[]; if(x.sys) out.push(bpFlag(x)); if(x.pulse!=null){ const h=hrFlag(x.pulse); if(h) out.push(h); } if(x.spo2!=null) out.push(spo2Flag(x.spo2)); return out.join(' '); }
+  function renderX(){ const d=peek(cur); const xs=extras(d).slice().sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    $('xTable').innerHTML= xs.length? '<tr><th>Time</th><th>Context</th><th class="num">Weight</th><th class="num">BP</th><th class="num">Pulse</th><th class="num">SpO₂</th><th>Flags</th><th>Note</th><th></th></tr>'+
+      xs.map(x=>`<tr><td>${to12(x.time)}</td><td>${esc(x.ctx)}</td><td class="num">${x.weight??''}</td><td class="num">${x.sys?x.sys+'/'+x.dia:''}</td><td class="num">${x.pulse??''}</td><td class="num">${x.spo2??''}</td><td>${xFlags(x)}</td><td>${esc(x.note||'')}</td><td><button class="x" data-xid="${x.id}" aria-label="remove">×</button></td></tr>`).join('')
+      : '<tr><td class="muted small">No other readings for this day.</td></tr>'; }
+  const _renderMorning=renderMorning; renderMorning=function(){ _renderMorning(); renderX(); };
+  const _initMorning=initMorning; initMorning=function(){ _initMorning();
+    $('addX').onclick=()=>{ const x={id:Date.now(),time:$('xTime').value||nowHM(),ctx:$('xCtx').value,weight:num($('xWt').value),sys:num($('xSys').value),dia:num($('xDia').value),pulse:num($('xPul').value),spo2:num($('xSpo2').value),note:$('xNote').value};
+      if(x.weight==null&&x.sys==null&&x.pulse==null&&x.spo2==null) return;
+      const d=day(); d.extra=extras(d).concat(x); ['xTime','xWt','xSys','xDia','xPul','xSpo2','xNote'].forEach(i=>$(i).value=''); save(); renderAll(); };
+    $('xTable').addEventListener('click',e=>{ if(e.target.dataset.xid){ const d=day(); d.extra=extras(d).filter(x=>String(x.id)!==e.target.dataset.xid); save(); renderAll(); } }); };
+  const _renderDash=renderDash; renderDash=function(){ _renderDash();
+    const d=peek(cur); const add=[];
+    extras(d).forEach(x=>{ const f=xFlags(x).split(/(?=<span class="status)/).filter(s=>s&&!/status good/.test(s)); f.forEach(s=>add.push(s.replace(/(<span class="status \w+">\S+ )/,`$1${to12(x.time)} ${esc(x.ctx)}: `))); });
+    if(add.length){ const al=$('alerts'); if(/No alerts for this day/.test(al.innerHTML)) al.innerHTML=''; al.innerHTML+=add.join(''); }
+    const ds=datesBack(cur,30); const am={sys:[],dia:[],pul:[],spo2:[],wt:[]}, pm={sys:[],dia:[],pul:[],spo2:[],wt:[]};
+    ds.forEach(s=>{ const dd=peek(s); if(!dd) return; const b=finalBP(dd);
+      if(b){ am.sys.push(b.sys); am.dia.push(b.dia); if(b.pulse!=null) am.pul.push(b.pulse); } if(dd.spo2!=null) am.spo2.push(dd.spo2); if(dd.weight!=null) am.wt.push(dd.weight);
+      extras(dd).forEach(x=>{ if(x.sys){ pm.sys.push(x.sys); pm.dia.push(x.dia); } if(x.pulse!=null) pm.pul.push(x.pulse); if(x.spo2!=null) pm.spo2.push(x.spo2); if(x.weight!=null) pm.wt.push(x.weight); }); });
+    const rowsDef=[['Systolic','sys',0],['Diastolic','dia',0],['Pulse','pul',0],['SpO₂ %','spo2',1],['Weight ('+S.settings.wUnit+')','wt',1]];
+    $('amPmTable').innerHTML='<tr><th>Measure</th><th class="num">Morning avg</th><th class="num">n</th><th class="num">Later-day avg</th><th class="num">n</th><th class="num">Later minus morning</th></tr>'+
+      rowsDef.map(([n,k,dc])=>{ const a=mean(am[k]), b=mean(pm[k]); return `<tr><td>${n}</td><td class="num">${r(a,dc)}</td><td class="num">${am[k].length}</td><td class="num">${r(b,dc)}</td><td class="num">${pm[k].length}</td><td class="num">${a!=null&&b!=null?((b-a)>0?'+':'')+(b-a).toFixed(dc+1):'—'}</td></tr>`; }).join('');
+    const xs=extras(d); $('xToday').innerHTML= xs.length? `<p class="small"><b>This day's other readings:</b> `+xs.map(x=>`${to12(x.time)} ${esc(x.ctx)}${x.sys?' · BP '+x.sys+'/'+x.dia:''}${x.pulse!=null?' · P '+x.pulse:''}${x.spo2!=null?' · SpO₂ '+x.spo2+'%':''}${x.weight!=null?' · Wt '+x.weight:''}`).join('; ')+'</p>' : '';
+  };
+  const _toCSV=toCSV; toCSV=function(){ const lines=_toCSV().split('\n'); const keys=Object.keys(S.days).sort();
+    return lines.map((l,i)=> i===0? l+',other_readings' : l+',"'+extras(S.days[keys[i-1]]).map(x=>`${x.time} ${x.ctx}${x.sys?' BP '+x.sys+'/'+x.dia:''}${x.pulse!=null?' P '+x.pulse:''}${x.spo2!=null?' SpO2 '+x.spo2:''}${x.weight!=null?' Wt '+x.weight:''}`).join('; ').replace(/"/g,'""')+'"').join('\n'); };
+  const _makeDemo=makeDemo; makeDemo=function(){ _makeDemo(); Object.keys(S.days).forEach((s,i)=>{ if(i%3===0){ const d=S.days[s], b=d.bp1||{sys:125,dia:78,pulse:64};
+    d.extra=[{id:Date.now()+i,time:'18:30',ctx:'Evening',sys:b.sys-6+Math.round(Math.random()*6),dia:b.dia-3,pulse:(b.pulse||64)+4,spo2:96,weight:+((d.weight||198)+1.6).toFixed(1),note:''}]; } }); };
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 3: sodium limit + Go To Meals ===== */
+DEFAULTS.settings.naMg = 2300;
+const SEED_RECIPES = [
+ {id:'r-oats',name:'Overnight oats with berries & walnuts',meal:'Breakfast',servings:1,
+  ing:'½ cup rolled oats\n½ cup unsweetened almond milk\n½ cup blueberries\n1 tbsp chopped walnuts\n1 tsp chia seeds\nCinnamon to taste',
+  steps:'Stir oats, almond milk, chia and cinnamon in a jar. Refrigerate overnight. Top with berries and walnuts.',
+  per:{kcal:280,na:95,k:330,pro:8,carb:41,fib:8,sat:1,fl:120},notes:'Almond milk is the only real sodium source. Counts about 120 mL toward fluids.'},
+ {id:'r-salmon',name:'Lemon-dill salmon with roasted broccoli & carrots',meal:'Dinner',servings:2,
+  ing:'2 salmon fillets, 5 oz each (fresh, not smoked)\n3 cups broccoli florets\n2 carrots, sliced\n1 tbsp olive oil\n1 lemon\n2 cloves garlic\nFresh dill, black pepper (no salt)',
+  steps:'Roast vegetables with half the oil at 425°F for 15 min. Add salmon brushed with remaining oil, garlic, lemon and dill. Roast 10–12 min more.',
+  per:{kcal:425,na:170,k:1150,pro:33,carb:17,fib:6,sat:3,fl:0},notes:'High potassium. Smoked salmon would add 600+ mg sodium per serving.'},
+ {id:'r-chili',name:'Turkey & black bean chili (no-salt-added)',meal:'Dinner',servings:4,
+  ing:'1 lb 93% lean ground turkey\n2 cans (15 oz) no-salt-added black beans, drained and rinsed\n1 can (28 oz) no-salt-added diced tomatoes\n1 onion, 1 bell pepper, diced\n1 tbsp olive oil\n2 tbsp salt-free chili seasoning, 1 tsp cumin, 2 cloves garlic',
+  steps:'Brown turkey with onion and pepper in oil. Add spices, tomatoes and beans. Simmer 25 minutes.',
+  per:{kcal:430,na:125,k:1075,pro:34,carb:42,fib:14,sat:3,fl:120},notes:'Regular canned beans and tomatoes would push this to about 700 mg per serving. Count about 120 mL toward fluids.'},
+ {id:'r-parfait',name:'Greek yogurt berry parfait',meal:'Snack',servings:1,
+  ing:'¾ cup plain nonfat Greek yogurt\n½ cup sliced strawberries\n1 tbsp unsalted sliced almonds\n1 tsp honey',
+  steps:'Layer yogurt and berries; top with almonds and honey.',
+  per:{kcal:180,na:65,k:400,pro:19,carb:20,fib:2,sat:0.5,fl:0},notes:'Most granolas add 50 to 150 mg sodium; almonds keep it low.'},
+ {id:'r-stirfry',name:'Chicken & vegetable stir-fry with brown rice',meal:'Dinner',servings:2,
+  ing:'10 oz chicken breast, sliced\n3 cups mixed vegetables (bell pepper, snap peas, mushrooms)\n2 tsp reduced-sodium soy sauce\n1 tbsp fresh ginger, 2 cloves garlic\n1 tbsp canola oil\n1½ cups cooked brown rice (no salt)',
+  steps:'Stir-fry chicken in oil until done; remove. Stir-fry vegetables with ginger and garlic. Return chicken, add soy sauce, serve over rice.',
+  per:{kcal:445,na:305,k:770,pro:35,carb:48,fib:6,sat:1.5,fl:0},notes:'Soy sauce supplies most of the sodium. Using 1 tsp instead of 2 saves about 95 mg per serving.'}
+];
+(function(){
+  const _load=load; load=function(){ _load(); if(S.settings.naMg===''||S.settings.naMg==null) S.settings.naMg=2300; if(!Array.isArray(S.recipes)) S.recipes=JSON.parse(JSON.stringify(SEED_RECIPES)); };
+  const naLim=()=>num(S.settings.naMg)||2300;
+  function budget(){ const used=sodiumTotal(peek(cur))||0, lim=naLim(), left=lim-used;
+    $('naBudgetVal').innerHTML=`${used.toLocaleString()} <span class="small">of ${lim.toLocaleString()} mg</span>`;
+    $('naBudgetSub').innerHTML= left>=0? `<b>${left.toLocaleString()} mg</b> left for the rest of today` : status('crit',`${(-left).toLocaleString()} mg over your limit`);
+    const b=$('naBudgetBar'); b.classList.toggle('over',left<0); b.firstElementChild.style.width=Math.min(100,used/lim*100)+'%'; return left; }
+  function renderRecipes(){ if(!Array.isArray(S.recipes)) S.recipes=[]; const left=budget(); const q=$('rcpSearch').value.toLowerCase(), t=$('rcpType').value, so=$('rcpSort').value;
+    let list=S.recipes.filter(x=>(!t||x.meal===t)&&(!q||(x.name+' '+x.ing).toLowerCase().includes(q)));
+    list.sort((a,b)=> so==='name'? a.name.localeCompare(b.name) : ((a.per[so]??1e9)-(b.per[so]??1e9)));
+    $('rcpList').innerHTML= list.map(x=>{ const p=x.per||{}; const fits=p.na!=null&&p.na<=left;
+      return `<div class="rcp"><h4>${esc(x.name)}</h4><div class="small muted">${esc(x.meal)} · serves ${x.servings}</div>
+      <div class="nut"><span class="na">Na ${p.na??'?'} mg (${p.na!=null?Math.round(p.na/naLim()*100):'?'}% of limit)</span><span>${p.kcal??'?'} kcal</span><span>K ${p.k??'?'} mg</span><span>Protein ${p.pro??'?'} g</span><span>Carbs ${p.carb??'?'} g</span><span>Fiber ${p.fib??'?'} g</span><span>Sat fat ${p.sat??'?'} g</span><span>Fluid ${p.fl??0} mL</span>${p.na!=null?(fits?status('good','fits today'):status('warn','over remaining sodium')):''}</div>
+      <details><summary>Ingredients &amp; steps</summary><pre>${esc(x.ing)}</pre><pre>${esc(x.steps)}</pre>${x.notes?`<p class="small"><b>Notes:</b> ${esc(x.notes)}</p>`:''}</details>
+      <div class="row" style="gap:6px;margin-top:8px"><button class="btn sm" data-log="${x.id}">Log ${$('rcpServ').value} serving${$('rcpServ').value==='1'?'':'s'} to ${cur===todayISO()?'today':fmtDate(cur)}</button><button class="btn ghost sm" data-edit="${x.id}">Edit</button><button class="btn ghost sm" data-del="${x.id}">Delete</button></div></div>`; }).join('') || '<p class="small muted">No recipes match.</p>'; }
+  function fill(x){ $('rcpId').value=x?x.id:''; $('rcpFormTitle').textContent=x?'Edit recipe':'Add a recipe';
+    $('rName').value=x?x.name:''; $('rMeal').value=x?x.meal:'Dinner'; $('rServ').value=x?x.servings:2; $('rIng').value=x?x.ing:''; $('rSteps').value=x?x.steps:''; $('rNotes').value=x?x.notes||'':'';
+    const p=(x&&x.per)||{}; $('rKcal').value=p.kcal??''; $('rNa').value=p.na??''; $('rK').value=p.k??''; $('rPro').value=p.pro??''; $('rCarb').value=p.carb??''; $('rFib').value=p.fib??''; $('rSat').value=p.sat??''; $('rFl').value=p.fl??''; }
+  window.importClaude=function(o){ if(!o||o.kind!=='health-ledger-import') throw new Error('not an import file'); const n={};
+    ['recipes','articles','reading','notes'].forEach(k=>{ if(Array.isArray(o[k])){ S[k]=S[k]||[]; o[k].forEach(it=>{ const i=S[k].findIndex(z=>z.id===it.id); if(i>=0) S[k][i]=it; else S[k].push(it); }); n[k]=o[k].length; } });
+    save(); renderAll(); return n; };
+  window.readImport=function(input,msgEl){ const f=input.files[0]; if(!f) return; const rd=new FileReader();
+    rd.onload=()=>{ try{ const n=importClaude(JSON.parse(rd.result)); msgEl.textContent='Imported: '+Object.entries(n).map(([k,v])=>v+' '+k).join(', ')+' ✓'; }catch(e){ msgEl.textContent='That file is not a Health Ledger import from Claude.'; } input.value=''; };
+    rd.readAsText(f); };
+  window.copyText=function(txt,btn){ const done=()=>{ const o=btn.textContent; btn.textContent='Copied ✓'; setTimeout(()=>btn.textContent=o,1500); };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done,()=>{ uiShowText('Copy this text:',txt); });
+    else uiShowText('Copy this text:',txt); };
+  const _renderAll=renderAll; renderAll=function(){ _renderAll(); renderRecipes(); };
+  const _renderFood=renderFood; renderFood=function(){ _renderFood(); const na=sodiumTotal(peek(cur)), lim=naLim();
+    if(na!=null&&na>lim) $('naTotal').innerHTML+=' '+status('crit',`${(na-lim).toLocaleString()} mg over`); };
+  const _renderDash=renderDash; renderDash=function(){ _renderDash(); const na=sodiumTotal(peek(cur)), lim=naLim(); const a7=datesBack(cur,7).map(s=>sodiumTotal(peek(s))).filter(v=>v!=null);
+    $('tiles').insertAdjacentHTML('beforeend',`<div class="card tile"><div class="lbl">Sodium</div><div class="val">${na==null?'—':na.toLocaleString()+' <span class="small">mg</span>'}</div><div class="sub">limit ${lim.toLocaleString()} · ${a7.filter(v=>v>lim).length} of last 7 days over</div><div class="bar ${na>lim?'over':''}"><i style="width:${Math.min(100,(na||0)/lim*100)}%"></i></div></div>`);
+    if(na!=null&&na>lim){ const al=$('alerts'); if(/No alerts for this day/.test(al.innerHTML)) al.innerHTML=''; al.innerHTML+=status('crit',`Sodium ${(na-lim).toLocaleString()} mg over limit`); } };
+  document.addEventListener('DOMContentLoaded',()=>{
+    ['rcpSearch','rcpType','rcpSort','rcpServ'].forEach(i=>$(i).addEventListener('input',renderRecipes));
+    $('rcpList').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.log){ const x=S.recipes.find(z=>z.id===b.dataset.log); const d=day(), t=nowHM();
+        const sv=num($('rcpServ').value)||1, P=x.per||{}, sc=v=>v==null?null:Math.round(v*sv*10)/10;
+        d.meals.push({type:x.meal,time:t,desc:x.name+' ('+sv+' serving'+(sv===1?'':'s')+')',na:P.na==null?null:Math.round(P.na*sv),kcal:P.kcal==null?null:Math.round(P.kcal*sv),carb:sc(P.carb),fib:sc(P.fib),pro:sc(P.pro),sat:sc(P.sat),k:P.k==null?null:Math.round(P.k*sv),recipe:x.id});
+        if(P.fl) d.fluids.push({ml:Math.round(P.fl*sv),what:x.name,time:t}); save(); renderAll(); b.textContent='Logged ✓'; }
+      if(b.dataset.edit){ fill(S.recipes.find(z=>z.id===b.dataset.edit)); $('rName').scrollIntoView({behavior:'smooth',block:'center'}); }
+      if(b.dataset.del){ uiConfirm('Delete this recipe?',{ok:'Delete',danger:true}).then(ok=>{ if(ok){ S.recipes=S.recipes.filter(z=>z.id!==b.dataset.del); save(); renderAll(); } }); } });
+    $('rSave').onclick=()=>{ if(!$('rName').value.trim()){ $('rMsg').textContent='Give the recipe a name.'; return; }
+      const x={id:$('rcpId').value||'r-'+Date.now(),name:$('rName').value.trim(),meal:$('rMeal').value,servings:num($('rServ').value)||1,ing:$('rIng').value,steps:$('rSteps').value,notes:$('rNotes').value,
+        per:{kcal:num($('rKcal').value),na:num($('rNa').value),k:num($('rK').value),pro:num($('rPro').value),carb:num($('rCarb').value),fib:num($('rFib').value),sat:num($('rSat').value),fl:num($('rFl').value)||0}};
+      const i=S.recipes.findIndex(z=>z.id===x.id); if(i>=0) S.recipes[i]=x; else S.recipes.push(x); save(); fill(null); $('rMsg').textContent='Saved ✓'; renderAll(); };
+    $('rClear').onclick=()=>fill(null);
+    $('rAsk').onclick=e=>copyText(`Please estimate per-serving nutrition (calories, carbohydrates g, fiber g, saturated fat g, sodium mg, potassium mg, protein g, fluid mL to count toward my ${S.settings.fluidMl} mL daily fluid limit) for this recipe, suggest lower-sodium swaps to keep it well under my ${naLim()} mg daily limit, and return a Health Ledger import file.\n\nRecipe: ${$('rName').value}\nMeal: ${$('rMeal').value}\nServings: ${$('rServ').value}\nIngredients:\n${$('rIng').value}\nSteps:\n${$('rSteps').value}\n\nReturn the import file as JSON shaped like: {\"kind\":\"health-ledger-import\",\"recipes\":[{\"id\":\"r-<slug>\",\"name\":\"\",\"meal\":\"Dinner\",\"servings\":2,\"ing\":\"one per line\",\"steps\":\"\",\"notes\":\"\",\"per\":{\"kcal\":0,\"na\":0,\"k\":0,\"pro\":0,\"carb\":0,\"fib\":0,\"sat\":0,\"fl\":0}}]} with na and k in mg; pro, carb, fib, sat in g; fl in mL.`,e.target);
+    $('rImport').onchange=e=>readImport(e.target,$('rImpMsg'));
+  });
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 5: Notes ===== */
+(function(){
+  const _load=load; load=function(){ _load(); if(!Array.isArray(S.notes)) S.notes=[]; };
+  function card(n){ return `<div class="ncard ${n.resolved?'resolved':''}"><div class="meta">${fmtDate(n.date,{year:'numeric',month:'short',day:'numeric'})} · ${esc(n.cat)}${(n.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <b>${esc(n.title||'(untitled)')}</b><p>${esc(n.body)}</p>
+    <div class="row" style="gap:6px">${n.cat==='Question for doctor'?`<button class="btn ghost sm" data-res="${n.id}">${n.resolved?'Reopen':'Mark answered'}</button>`:''}<button class="btn ghost sm" data-ned="${n.id}">Edit</button><button class="btn ghost sm" data-ndel="${n.id}">Delete</button></div></div>`; }
+  function renderNotes(){ if(!Array.isArray(S.notes)) S.notes=[]; if(!$('nDate').value) $('nDate').value=cur;
+    const q=$('nSearch').value.toLowerCase(), f=$('nFilter').value;
+    const list=S.notes.filter(n=>(!f||n.cat===f)&&(!q||(n.title+' '+n.body+' '+(n.tags||[]).join(' ')).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+    $('nList').innerHTML=list.map(card).join('')||'<p class="small muted">No notes yet.</p>';
+    const open=S.notes.filter(n=>n.cat==='Question for doctor'&&!n.resolved);
+    $('nOpen').innerHTML=open.length? '<ol style="margin:0 0 0 18px;padding:0">'+open.map(n=>`<li style="margin-bottom:4px"><b>${esc(n.title)}</b>${n.body?` <span class="small muted">${esc(n.body)}</span>`:''}</li>`).join('')+'</ol>' : '<p class="small muted">No open questions.</p>'; }
+  function fill(n){ $('nId').value=n?n.id:''; $('nFormTitle').textContent=n?'Edit note':'New note'; $('nDate').value=n?n.date:cur; $('nCat').value=n?n.cat:'Question for doctor';
+    $('nTitle').value=n?n.title:''; $('nBody').value=n?n.body:''; $('nTags').value=n?(n.tags||[]).join(', '):''; }
+  const _renderAll=renderAll; renderAll=function(){ _renderAll(); renderNotes(); };
+  document.addEventListener('DOMContentLoaded',()=>{
+    ['nSearch','nFilter'].forEach(i=>$(i).addEventListener('input',renderNotes));
+    $('nSave').onclick=()=>{ if(!$('nTitle').value.trim()&&!$('nBody').value.trim()) return; const id=+$('nId').value||Date.now();
+      const n={id,date:$('nDate').value||cur,cat:$('nCat').value,title:$('nTitle').value.trim(),body:$('nBody').value,tags:$('nTags').value.split(',').map(s=>s.trim()).filter(Boolean),resolved:false};
+      const i=S.notes.findIndex(z=>z.id===id); if(i>=0){ n.resolved=S.notes[i].resolved; S.notes[i]=n; } else S.notes.push(n); save(); fill(null); renderNotes(); };
+    $('nClear').onclick=()=>fill(null);
+    $('nList').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const id=+(b.dataset.res||b.dataset.ned||b.dataset.ndel); const n=S.notes.find(z=>z.id===id); if(!n) return;
+      if(b.dataset.res){ n.resolved=!n.resolved; save(); renderNotes(); }
+      if(b.dataset.ned){ fill(n); $('nTitle').scrollIntoView({behavior:'smooth',block:'center'}); }
+      if(b.dataset.ndel){ uiConfirm('Delete this note?',{ok:'Delete',danger:true}).then(ok=>{ if(ok){ S.notes=S.notes.filter(z=>z.id!==id); save(); renderNotes(); } }); } });
+    $('nPrintQ').onclick=e=>copyText('Questions for my next appointment:\n'+S.notes.filter(n=>n.cat==='Question for doctor'&&!n.resolved).map((n,i)=>`${i+1}. ${n.title}${n.body?' ('+n.body+')':''}`).join('\n'),e.target);
+  });
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 6: Reading List ===== */
+const SEED_READING=[
+ {id:'rl1',title:'Monitoring Your Blood Pressure at Home',auth:'American Heart Association',src:'heart.org',type:'Patient education',topic:'Blood pressure',status:'To read',url:'https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/monitoring-your-blood-pressure-at-home',why:'The standard home-measurement protocol your morning routine follows: no exercise or caffeine 30 minutes before, empty bladder, 5 minutes of quiet rest.'},
+ {id:'rl2',title:'Self-Measured Blood Pressure Monitoring at Home: A Joint Policy Statement',auth:'Shimbo D, et al. (AHA and AMA)',src:'Circulation, 2020',type:'Guideline',topic:'Blood pressure',status:'To read',url:'',why:'The clinical basis for home BP technique, validated cuffs, and how many readings to average.'},
+ {id:'rl3',title:'Recommendations in Post-Exercise Hypotension: Concerns, Best Practices and Interpretation',auth:'de Brito LC, Fecchio RY, Peçanha T, et al.',src:'International Journal of Sports Medicine, 2019',type:'Academic',topic:'Exercise',status:'To read',url:'https://e-space.mmu.ac.uk/629963/1/Brito_2019_PEH_Review_Concerns_Submission.pdf',why:'Why your BP reads lower for hours after exercise, and why the timing of exercise and BP checks matters.'},
+ {id:'rl4',title:'Exercise and Hypertension (ACSM Position Stand)',auth:'Pescatello LS, et al.',src:'Medicine & Science in Sports & Exercise, 2004',type:'Guideline',topic:'Exercise',status:'To read',url:'',why:'The evidence base for moderate aerobic exercise on most days as BP treatment.'},
+ {id:'rl5',title:'Effects on Blood Pressure of Reduced Dietary Sodium and the DASH Diet',auth:'Sacks FM, et al.',src:'New England Journal of Medicine, 2001',type:'Academic',topic:'Sodium & diet',status:'To read',url:'',why:'The landmark DASH-Sodium trial: step-down sodium levels and the BP response.'},
+ {id:'rl6',title:'Reduction of Dietary Sodium to Less Than 100 mmol in Heart Failure (SODIUM-HF)',auth:'Ezekowitz JA, et al.',src:'The Lancet, 2022',type:'Academic',topic:'Sodium & diet',status:'To read',url:'',why:'A large heart-failure trial of a low sodium target (about 1,500 mg). Read it for what it did and did not show on outcomes and quality of life.'},
+ {id:'rl7',title:'Grapefruit Juice and Some Drugs Don\'t Mix',auth:'U.S. Food and Drug Administration',src:'FDA Consumer Update',type:'Patient education',topic:'Medications',status:'To read',url:'',why:'Plain-language explanation of why grapefruit interacts with some statins, blood pressure and heart-rhythm medicines.'},
+ {id:'rl8',title:'Mayo Clinic Q&A',auth:'Mayo Clinic',src:'Podcast',type:'Podcast',topic:'Heart health',status:'To read',url:'',why:'Short episodes with Mayo clinicians; search the archive for blood pressure, heart health, and cardiac rehab.'},
+ {id:'rl9',title:'CardioNerds',auth:'CardioNerds team',src:'Podcast',type:'Podcast',topic:'Heart health',status:'To read',url:'',why:'Clinician-level cardiology podcast. Dense but useful when you want the reasoning behind a drug class or guideline.'}
+];
+(function(){
+  const TYPES=['Academic','Guideline','Practitioner','Patient education','Podcast','News'];
+  let typeF='';
+  const _load=load; load=function(){ _load(); if(!Array.isArray(S.reading)) S.reading=JSON.parse(JSON.stringify(SEED_READING)); };
+  function renderReading(){ if(!Array.isArray(S.reading)) S.reading=[];
+    $('rlTypes').innerHTML=['All'].concat(TYPES).map(t=>{ const on=(t==='All'&&!typeF)||t===typeF; const n=t==='All'?S.reading.length:S.reading.filter(x=>x.type===t).length;
+      return `<button class="chip" data-t="${t}" style="${on?'background:var(--yale);color:#fff':''}">${t} (${n})</button>`; }).join('');
+    const tp=$('rlTopic').value, st=$('rlStatus').value, q=$('rlSearch').value.toLowerCase();
+    const list=S.reading.filter(x=>(!typeF||x.type===typeF)&&(!tp||x.topic===tp)&&(!st||x.status===st)&&(!q||(x.title+' '+x.auth+' '+x.why).toLowerCase().includes(q)));
+    $('rlList').innerHTML=list.map(x=>`<div class="ncard"><div class="meta">${esc(x.type)} · ${esc(x.topic)} <span class="tag">${esc(x.status)}</span></div>
+      <b>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>`:esc(x.title)}</b><div class="small">${esc(x.auth)}${x.src?' · <i>'+esc(x.src)+'</i>':''}</div>
+      ${x.why?`<p class="small">${esc(x.why)}</p>`:''}
+      <div class="row" style="gap:6px"><select data-st="${x.id}" style="width:auto;font-size:13px;padding:3px 6px">${['To read','Reading','Done'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`).join('')}</select><button class="btn ghost sm" data-red="${x.id}">Edit</button><button class="btn ghost sm" data-rdel="${x.id}">Delete</button></div></div>`).join('') || '<p class="small muted">Nothing matches these filters.</p>'; }
+  function fill(x){ $('rlId').value=x?x.id:''; $('rlFormTitle').textContent=x?'Edit item':'Add an item';
+    [['rlTitle','title'],['rlAuth','auth'],['rlSrc','src'],['rlUrl','url'],['rlWhy','why']].forEach(([i,k])=>$(i).value=x?(x[k]||''):'');
+    $('rlType').value=x?x.type:'Academic'; $('rlTop').value=x?x.topic:'Blood pressure'; $('rlStat').value=x?x.status:'To read'; }
+  const _renderAll=renderAll; renderAll=function(){ _renderAll(); renderReading(); };
+  document.addEventListener('DOMContentLoaded',()=>{
+    $('rlTypes').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; typeF=b.dataset.t==='All'?'':b.dataset.t; renderReading(); });
+    ['rlTopic','rlStatus','rlSearch'].forEach(i=>$(i).addEventListener('input',renderReading));
+    $('rlList').addEventListener('change',e=>{ if(e.target.dataset.st){ const x=S.reading.find(z=>z.id===e.target.dataset.st); x.status=e.target.value; save(); renderReading(); } });
+    $('rlList').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.red){ fill(S.reading.find(z=>z.id===b.dataset.red)); $('rlTitle').scrollIntoView({behavior:'smooth',block:'center'}); }
+      if(b.dataset.rdel){ uiConfirm('Remove this item?',{ok:'Delete',danger:true}).then(ok=>{ if(ok){ S.reading=S.reading.filter(z=>z.id!==b.dataset.rdel); save(); renderReading(); } }); } });
+    $('rlSave').onclick=()=>{ if(!$('rlTitle').value.trim()) return; const x={id:$('rlId').value||'rl-'+Date.now(),title:$('rlTitle').value.trim(),auth:$('rlAuth').value,src:$('rlSrc').value,type:$('rlType').value,topic:$('rlTop').value,status:$('rlStat').value,url:$('rlUrl').value.trim(),why:$('rlWhy').value};
+      const i=S.reading.findIndex(z=>z.id===x.id); if(i>=0) S.reading[i]=x; else S.reading.push(x); save(); fill(null); renderReading(); };
+    $('rlClear').onclick=()=>fill(null);
+  });
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 7: Found Articles ===== */
+(function(){
+  const VERD={'Well supported':'good','Partly supported':'warn','Weak evidence':'warn','Not supported':'crit','Misleading':'crit'};
+  const _load=load; load=function(){ _load(); if(!Array.isArray(S.articles)) S.articles=[]; };
+  function analysisHTML(a){ const x=a.analysis; if(!x) return `<div class="an small muted">Awaiting analysis. Use "Copy request for Claude", then load the import file I send back.</div>`;
+    const li=arr=>'<ul style="margin:2px 0 0 18px;padding:0">'+arr.map(s=>`<li>${s}</li>`).join('')+'</ul>';
+    return `<div class="an">${x.verdict?status(VERD[x.verdict]||'warn',esc(x.verdict)):''} <span class="small muted">analyzed ${x.analyzedOn?fmtDate(x.analyzedOn,{year:'numeric',month:'short',day:'numeric'}):''}</span>
+      ${x.summary?`<h5>Summary</h5><p style="margin:2px 0">${esc(x.summary)}</p>`:''}
+      ${(x.claims||[]).length?`<h5>Claims checked</h5><table><tr><th>Claim</th><th>Rating</th><th>What the evidence says</th></tr>${x.claims.map(c=>`<tr><td>${esc(c.claim)}</td><td>${c.rating?status(VERD[c.rating]||'warn',esc(c.rating)):''}</td><td>${esc(c.evidence)}</td></tr>`).join('')}</table>`:''}
+      ${x.relevance?`<h5>What it means for you</h5><p style="margin:2px 0">${esc(x.relevance)}</p>`:''}
+      ${x.caveats?`<h5>Caveats</h5><p style="margin:2px 0">${esc(x.caveats)}</p>`:''}
+      ${(x.questions||[]).length?`<h5>Questions to ask your doctor</h5>${li(x.questions.map(esc))}<button class="btn ghost sm" data-aq="${a.id}" style="margin-top:6px">Add these to Notes</button>`:''}
+      ${(x.sources||[]).length?`<h5>Sources</h5>${li(x.sources.map(s=>s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`:esc(s.title)))}`:''}</div>`; }
+  function renderArticles(){ if(!Array.isArray(S.articles)) S.articles=[]; const f=$('aFilter').value;
+    const st=a=>a.analysis?'Analyzed':'Awaiting analysis';
+    $('aCount').textContent=`${S.articles.length} saved · ${S.articles.filter(a=>!a.analysis).length} awaiting`;
+    const list=S.articles.filter(a=>!f||st(a)===f).sort((a,b)=>(b.added||'').localeCompare(a.added||''));
+    $('aList').innerHTML=list.map(a=>`<div class="art"><div class="meta small muted">${esc(a.src||'')}${a.auth?' · '+esc(a.auth):''}${a.date?' · '+fmtDate(a.date,{year:'numeric',month:'short',day:'numeric'}):''} <span class="tag">${st(a)}</span></div>
+      <h4>${a.url?`<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a>`:esc(a.title)}</h4>
+      ${a.why?`<p class="small"><b>My question:</b> ${esc(a.why)}</p>`:''}
+      <div class="row" style="gap:6px"><button class="btn sm" data-aask="${a.id}">Copy request for Claude</button><button class="btn ghost sm" data-aed="${a.id}">Edit</button><button class="btn ghost sm" data-adel="${a.id}">Delete</button></div>
+      ${analysisHTML(a)}</div>`).join('') || '<p class="small muted">No articles yet.</p>'; }
+  function fill(a){ $('aId').value=a?a.id:''; $('aFormTitle').textContent=a?'Edit article':'Add an article';
+    [['aTitle','title'],['aSrc','src'],['aAuth','auth'],['aDate','date'],['aUrl','url'],['aWhy','why']].forEach(([i,k])=>$(i).value=a?(a[k]||''):''); }
+  function request(a){ return `Please read and analyze this article for my Health Ledger "Found Articles" tab. I'm uploading it (or here's the link). Verify its main claims against current guidelines and peer-reviewed research, flag anything weak or misleading, explain how it applies to my medicines and routine, list questions for my doctor, and return a Health Ledger import file (kind "health-ledger-import", articles array) with this article id: ${a.id}.\n\nTitle: ${a.title}\nPublication: ${a.src||''}\nAuthor: ${a.auth||''}\nDate: ${a.date||''}\nLink: ${a.url||'(uploading file)'}\nWhat I want checked: ${a.why||''}\n\nReturn JSON shaped like: {\"kind\":\"health-ledger-import\",\"articles\":[{\"id\":\"${a.id}\",\"title\":\"\",\"src\":\"\",\"auth\":\"\",\"date\":\"YYYY-MM-DD\",\"url\":\"\",\"why\":\"\",\"added\":\"YYYY-MM-DD\",\"analysis\":{\"analyzedOn\":\"YYYY-MM-DD\",\"verdict\":\"Well supported | Partly supported | Weak evidence | Not supported | Misleading\",\"summary\":\"\",\"claims\":[{\"claim\":\"\",\"rating\":\"\",\"evidence\":\"\"}],\"relevance\":\"\",\"caveats\":\"\",\"questions\":[\"\"],\"sources\":[{\"title\":\"\",\"url\":\"\"}]}}]}\nMy current medicines: ${MEDS.map(m=>m.name+' '+m.dose).join('; ')||'(none listed)'}`; }
+  const _renderAll=renderAll; renderAll=function(){ _renderAll(); renderArticles(); };
+  document.addEventListener('DOMContentLoaded',()=>{
+    $('aFilter').addEventListener('input',renderArticles);
+    $('aImport').onchange=e=>readImport(e.target,$('aImpMsg'));
+    $('aSave').onclick=()=>{ if(!$('aTitle').value.trim()) return; const id=$('aId').value||'a-'+Date.now(); const old=S.articles.find(z=>z.id===id)||{};
+      const a=Object.assign({},old,{id,title:$('aTitle').value.trim(),src:$('aSrc').value,auth:$('aAuth').value,date:$('aDate').value,url:$('aUrl').value.trim(),why:$('aWhy').value,added:old.added||todayISO()});
+      const i=S.articles.findIndex(z=>z.id===id); if(i>=0) S.articles[i]=a; else S.articles.push(a); save(); fill(null); renderArticles(); };
+    $('aClear').onclick=()=>fill(null);
+    $('aList').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const id=b.dataset.aask||b.dataset.aed||b.dataset.adel||b.dataset.aq; const a=S.articles.find(z=>z.id===id); if(!a) return;
+      if(b.dataset.aask) copyText(request(a),b);
+      if(b.dataset.aed){ fill(a); $('aTitle').scrollIntoView({behavior:'smooth',block:'center'}); }
+      if(b.dataset.adel){ uiConfirm('Delete this article and its analysis?',{ok:'Delete',danger:true}).then(ok=>{ if(ok){ S.articles=S.articles.filter(z=>z.id!==id); save(); renderArticles(); } }); }
+      if(b.dataset.aq){ (a.analysis.questions||[]).forEach((q,i)=>S.notes.push({id:Date.now()+i,date:cur,cat:'Question for doctor',title:q,body:'From article: '+a.title,tags:['article'],resolved:false})); save(); renderAll(); b.textContent='Added to Notes ✓'; } });
+  });
+})();
+
+</script>
+<script>
+
+/* ===== Iteration 8: erase keeps libraries ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  $('clearBtn').onclick=()=>{ if(!confirm('Erase all daily logs, exercise, notes and articles on this device? Recipes and the reading list stay. Export a backup first if you need it.')) return;
+    const keep={settings:S.settings,recipes:S.recipes,reading:S.reading}; S=JSON.parse(JSON.stringify(DEFAULTS)); Object.assign(S,keep); S.notes=[]; S.articles=[]; save(); renderAll(); };
+});
+
+</script>
+<script>
+
+/* ================= BATHROOM TRIPS & ESTIMATED OUTPUT ================= */
+const TRIP_X={S:0.5,N:1,L:1.5}, TRIP_LBL={S:'small',N:'normal',L:'large'};
+function tripMl(){ return S.settings.tripMl||300; }
+function mlPerUnit(){ return S.settings.wUnit==='kg'?1000:453.6; }
+function tripsOf(d){ return (d&&d.trips)||[]; }
+function tripEst(d){ const t=tripsOf(d); return t.length? Math.round(t.reduce((a,x)=>a+(TRIP_X[x.sz]||1),0)*tripMl()) : null; }
+function balanceEst(s){ const d=peek(s), n=peek(addDays(s,1)); if(!d||!n||d.weight==null||n.weight==null) return null;
+  const intake=fluidTotal(d); if(!intake) return null; return Math.round(intake-(n.weight-d.weight)*mlPerUnit()-sweatDay(s)); }
+function sweatOf(e){ if(e.wB==null||e.wA==null) return null; return Math.max(0,Math.round((e.wB-e.wA)*mlPerUnit()+(e.drink||0))); }
+function sweatDay(s){ return S.exercise.filter(e=>e.date===s).reduce((a,e)=>a+(sweatOf(e)||0),0); }
+function renderTrips(){
+  const d=peek(cur), t=tripsOf(d).slice().sort((a,b)=>(a.t||'').localeCompare(b.t||''));
+  $('tripN').textContent=t.length; $('tripMl').value=tripMl();
+  $('tripList').innerHTML=t.length? t.map(x=>`<span>${x.t?to12(x.t):'no time'} · ${TRIP_LBL[x.sz]||'normal'}<button class="x" data-del="${x.id}" aria-label="Remove trip">×</button></span>`).join('') : '<span class="small muted" style="background:none;border:0">No trips logged for this day.</span>';
+  const u=S.settings.wUnit;
+  const rowFor=(s,lbl)=>{ const dd=peek(s), n=peek(addDays(s,1)); const te=tripEst(dd), be=balanceEst(s), intake=dd?fluidTotal(dd):0;
+    const dw=(dd&&n&&dd.weight!=null&&n.weight!=null)? n.weight-dd.weight : null;
+    return `<tr><td>${lbl}</td><td class="num">${tripsOf(dd).length||'—'}</td><td class="num">${te!=null?te.toLocaleString():'—'}</td><td class="num">${intake?intake.toLocaleString():'—'}</td><td class="num">${dw==null?'<span class="muted">after next weigh-in</span>':(dw>0?'+':'')+dw.toFixed(1)+' '+u}</td><td class="num"><b>${be!=null?be.toLocaleString():'—'}</b>${sweatDay(s)?`<br><span class="small muted">after ${sweatDay(s).toLocaleString()} mL sweat</span>`:''}</td></tr>`; };
+  $('outTable').innerHTML='<tr><th>Day</th><th class="num">Trips</th><th class="num">Est. by trips (mL)</th><th class="num">Fluid in (mL)</th><th class="num">Weight change to next morning</th><th class="num">Est. by balance (mL)</th></tr>'+
+    rowFor(cur,'This day ('+fmtDate(cur,{month:'short',day:'numeric'})+')')+rowFor(addDays(cur,-1),'Previous day ('+fmtDate(addDays(cur,-1),{month:'short',day:'numeric'})+')');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  $('tripCard').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.sz){ const d=day(); d.trips=d.trips||[]; d.trips.push({id:Date.now(),t:$('tripTime').value||(cur===todayISO()?nowHM():''),sz:b.dataset.sz}); $('tripTime').value=''; save(); renderAll(); }
+    else if(b.dataset.del){ const d=day(); d.trips=tripsOf(d).filter(x=>String(x.id)!==b.dataset.del); save(); renderAll(); }
+    else if(b.id==='tripUndo'){ const d=day(); if(tripsOf(d).length){ d.trips.pop(); save(); renderAll(); } } });
+  $('tripMl').addEventListener('change',()=>{ const v=num($('tripMl').value); if(v&&v>=50&&v<=1000){ S.settings.tripMl=v; save(); renderAll(); } else $('tripMl').value=tripMl(); });
+});
+const _renderAllTrips=renderAll; renderAll=function(){ _renderAllTrips(); renderTrips(); };
+
+</script>
+<script>
+
+/* ================= DASHBOARD: ESTIMATED OUTPUT CHART ================= */
+const _renderDashOut=renderDash; renderDash=function(){ _renderDashOut();
+  const ds=datesBack(cur,range);
+  lineChart($('chOut'),[
+    {name:'By fluid balance',color:'#1F5A9E',pts:ds.map(s=>({x:s,y:balanceEst(s)}))},
+    {name:'By trips',color:'#eb6834',pts:ds.map(s=>({x:s,y:tripEst(peek(s))}))},
+    {name:'Fluid intake',color:'#7A766C',pts:ds.map(s=>({x:s,y:peek(s)&&fluidTotal(peek(s))||null}))}
+  ],{dates:ds,unit:'mL',refs:[{y:400,label:'400 mL: low output'}],label:'Estimated urine output trend'});
+};
+
+</script>
+<script>
+
+/* ================= NUTRITION: MEAL NUTRIENTS & TARGETS ================= */
+const NUT=[{k:'kcal',lbl:'Calories',u:'kcal',t:'kcalT',kind:'target'},{k:'carb',lbl:'Carbohydrates',u:'g',t:'carbLo',kind:'floor'},
+  {k:'fib',lbl:'Fiber',u:'g',t:'fibT',kind:'goal'},{k:'pro',lbl:'Protein',u:'g',t:'proT',kind:'goal'},
+  {k:'sat',lbl:'Saturated fat',u:'g',t:'satT',kind:'max'},{k:'k',lbl:'Potassium',u:'mg',t:'kHi',kind:'flag'}];
+Object.assign(DEFAULTS.settings,{kcalT:'',carbLo:'',fibT:'',proT:'',satT:'',kHi:''});
+Object.assign(SETMAP,{setKcalT:'kcalT',setCarbLo:'carbLo',setFibT:'fibT',setProT:'proT',setSatT:'satT',setKHi:'kHi'});
+function dayOpen(){ return cur===todayISO()&&new Date().getHours()<19; }
+function nutTotal(d,k){ if(!d) return null; const v=(d.meals||[]).map(m=>m[k]).filter(x=>x!=null); return v.length? Math.round(v.reduce((a,b)=>a+b,0)*10)/10 : null; }
+function fmtN(v,u){ return v==null?'—':(u==='g'? (Math.round(v*10)/10).toLocaleString() : Math.round(v).toLocaleString()); }
+function mealNutStr(m){ const p=[]; if(m.kcal!=null) p.push(fmtN(m.kcal)+' kcal'); if(m.na!=null) p.push(m.na+' mg Na'); if(m.carb!=null) p.push(fmtN(m.carb,'g')+' g carbs'); if(m.k!=null) p.push(m.k+' mg K');
+  return p.length? `<span class="small">${p.join(' · ')}</span>` : ''; }
+function nutStatus(n,v){ const tg=num(S.settings[n.t]); if(v==null||tg==null) return '';
+  if(n.kind==='floor'&&dayOpen()) return v<tg? '<span class="small muted">below floor so far; day in progress</span>' : status('good','Above your floor');
+  if(n.kind==='floor') return v<tg? status('warn','Below the floor your care team set') : status('good','Above your floor');
+  if(n.kind==='max') return v>tg? status('warn','Over your max') : status('good','Within max');
+  if(n.kind==='flag') return v>tg? status('warn','Above your flag: mention to care team') : '';
+  if(n.kind==='goal') return v>=tg? status('good','Goal met') : '';
+  return ''; }
+function renderNutrition(){
+  const d=peek(cur), meals=(d&&d.meals)||[]; const withK=meals.filter(m=>m.kcal!=null).length;
+  $('nutCover').textContent = meals.length? `(${withK} of ${meals.length} meals have calorie numbers)` : '(no meals logged)';
+  const naL=num(S.settings.naMg)||2300, na=sodiumTotal(d);
+  const rows=[{lbl:'Sodium',u:'mg',v:na,tg:naL,lab:'limit',st: na==null?'': (na>naL? status('crit','Over limit') : status('good','Within limit')),pct:na==null?null:na/naL,over:na>naL}]
+    .concat(NUT.map(n=>{ const v=nutTotal(d,n.k), tg=num(S.settings[n.t]); return {lbl:n.lbl,u:n.u,v,tg,lab:{target:'target',floor:'alert below',goal:'goal',max:'max',flag:'flag above'}[n.kind],st:nutStatus(n,v),
+      pct:(v!=null&&tg)? v/tg : null, over:(n.kind==='max'||n.kind==='flag')&&tg!=null&&v>tg}; }));
+  $('nutTable').innerHTML='<tr><th>Nutrient</th><th class="num">Today</th><th class="num">Target</th><th style="width:30%">Progress</th><th>Status</th></tr>'+
+    rows.map(x=>`<tr><td>${x.lbl}</td><td class="num">${fmtN(x.v,x.u)} ${x.v!=null?x.u:''}</td><td class="num">${x.tg!=null?`<span class="small muted">${x.lab}</span> ${fmtN(x.tg,x.u)}`:'<span class="small muted">not set</span>'}</td>
+      <td>${x.pct!=null?`<div class="bar ${x.over?'over':''}" style="margin-top:4px"><i style="width:${Math.min(100,x.pct*100)}%"></i></div>`:''}</td><td>${x.st}</td></tr>`).join('');
+}
+const _renderFoodNut=renderFood; renderFood=function(){ _renderFoodNut(); renderNutrition(); };
+
+</script>
+<script>
+
+/* ================= NUTRITION LABEL ENTRY ================= */
+document.addEventListener('DOMContentLoaded',()=>{
+  $('lbAdd').onclick=()=>{ const sv=num($('lbServ').value); if(sv==null||sv<=0){ $('lbMsg').textContent='Enter servings eaten.'; return; }
+    const map=[['lbKcal','mlKcal',0],['lbNa','mlNa',0],['lbCarb','mlCarb',1],['lbFib','mlFib',1],['lbPro','mlPro',1],['lbSat','mlSat',1],['lbK','mlK',0]];
+    let any=false; map.forEach(([a,b,dec])=>{ const v=num($(a).value); if(v==null) return; any=true; const f=Math.pow(10,dec);
+      $(b).value=Math.round(((num($(b).value)||0)+v*sv)*f)/f; });
+    if(!any){ $('lbMsg').textContent='Enter at least one number from the label.'; return; }
+    const nm=$('lbName').value.trim()||'Packaged item'; const desc=$('mlDesc').value.trim();
+    $('mlDesc').value=(desc?desc+'\n':'')+`${nm} (${sv} × ${$('lbSize').value.trim()||'serving'})`;
+    ['lbName','lbSize','lbKcal','lbNa','lbCarb','lbFib','lbPro','lbSat','lbK'].forEach(i=>$(i).value=''); $('lbServ').value=1;
+    $('lbMsg').innerHTML=status('good',nm+' added to the meal form. Add more items or click "Add meal".');
+    $('mlDesc').scrollIntoView({behavior:'smooth',block:'center'}); };
+});
+
+</script>
+<script>
+
+/* ================= DASHBOARD: NUTRITION ================= */
+const _renderDashNut=renderDash; renderDash=function(){ _renderDashNut();
+  const st=S.settings, ds=datesBack(cur,range), naL=num(st.naMg)||2300, ref=(k,l)=>num(st[k])!=null?[{y:num(st[k]),label:l+' '+num(st[k])}]:[];
+  barChart($('chNa'),ds.map(s=>({x:s,y:sodiumTotal(peek(s))||0})),{unit:'mg',goal:naL,goalLabel:'limit '+naL,overIsBad:true});
+  lineChart($('chKcal'),[{name:'Calories',color:'#1F5A9E',pts:ds.map(s=>({x:s,y:nutTotal(peek(s),'kcal')}))}],{dates:ds,unit:'kcal',refs:ref('kcalT','target'),label:'Calories trend'});
+  lineChart($('chCarb'),[{name:'Carbs',color:'#1F5A9E',pts:ds.map(s=>({x:s,y:nutTotal(peek(s),'carb')}))}],{dates:ds,unit:'g',refs:ref('carbLo','alert below'),label:'Carbohydrate trend'});
+  lineChart($('chK'),[{name:'Potassium',color:'#1F5A9E',pts:ds.map(s=>({x:s,y:nutTotal(peek(s),'k')}))}],{dates:ds,unit:'mg',refs:ref('kHi','flag'),label:'Potassium trend'});
+  const d=peek(cur), al=$('alerts'), add=h=>{ if(/No alerts for this day/.test(al.innerHTML)) al.innerHTML=''; al.innerHTML+=h; };
+  const carb=nutTotal(d,'carb'), cLo=num(st.carbLo); if(carb!=null&&cLo!=null&&carb<cLo&&!dayOpen()) add(status('warn',`Carbs ${Math.round(carb)} g, below your ${cLo} g floor`));
+  const sat=nutTotal(d,'sat'), sMx=num(st.satT); if(sat!=null&&sMx!=null&&sat>sMx) add(status('warn',`Saturated fat ${sat} g, over your ${sMx} g max`));
+  const k=nutTotal(d,'k'), kHi=num(st.kHi); if(k!=null&&kHi!=null&&k>kHi) add(status('warn',`Potassium ${Math.round(k)} mg from food, above your ${kHi} mg flag`));
+};
+
+</script>
+<script>/* ================= IN-PAGE DIALOGS, DOWNLOADS, PRINT =================
+   In-page dialogs work everywhere, including installed home-screen apps. */
+(function(){
+  function modal({msg,input=false,value=null,text=null,ok='OK',cancel='Cancel',danger=false}){
+    return new Promise(res=>{
+      const wrap=document.createElement('div'); wrap.className='uiModal'; wrap.setAttribute('role','dialog'); wrap.setAttribute('aria-modal','true');
+      wrap.innerHTML=`<div class="uiBox"><p class="uiMsg"></p>${input?'<input class="uiIn" type="text" autocomplete="off">':''}${text!=null?'<textarea class="uiTxt" readonly rows="8"></textarea>':''}
+        <div class="uiBtns">${text!=null?'<button class="btn uiCopy">Copy</button>':''}${cancel?'<button class="btn ghost uiNo"></button>':''}<button class="btn ${danger?'danger':''} uiYes"></button></div></div>`;
+      wrap.querySelector('.uiMsg').textContent=msg; wrap.querySelector('.uiYes').textContent=ok;
+      if(cancel) wrap.querySelector('.uiNo').textContent=cancel;
+      if(text!=null) wrap.querySelector('.uiTxt').value=text;
+      if(input&&value!=null) wrap.querySelector('.uiIn').value=value;
+      document.body.appendChild(wrap);
+      const inp=wrap.querySelector('.uiIn'), yes=wrap.querySelector('.uiYes'), no=wrap.querySelector('.uiNo');
+      const done=v=>{ wrap.remove(); res(v); };
+      const cp=wrap.querySelector('.uiCopy');
+      if(cp) cp.onclick=()=>{ const ta=wrap.querySelector('.uiTxt'); const ok=()=>{ cp.textContent='Copied ✓'; };
+        const sel=()=>{ ta.focus(); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){ cp.textContent='Press ⌘C'; } };
+        if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok,sel); else sel(); };
+      yes.onclick=()=>done(input? inp.value : true);
+      if(no) no.onclick=()=>done(input? null : false);
+      wrap.addEventListener('keydown',e=>{ if(e.key==='Escape') done(input?null:false); if(e.key==='Enter'&&input) done(inp.value); });
+      setTimeout(()=>(inp||yes).focus(),20);
+    });
+  }
+  window.uiConfirm=(msg,opt={})=>modal(Object.assign({msg,ok:'OK'},opt));
+  window.uiPrompt=(msg,opt={})=>modal(Object.assign({msg,input:true,ok:'OK'},opt));
+  window.uiAlert=msg=>modal({msg,cancel:null});
+  window.uiShowText=(msg,text)=>modal({msg,text,ok:'Close',cancel:null});
+
+  /* doctor-visit report: a standalone copy of the page that prints itself when opened */
+  function printReport(){
+    const dash=document.querySelector('#tabs button[data-tab=dash]'); if(dash) dash.click();
+    setTimeout(()=>{
+      const doc=document.documentElement.cloneNode(true);
+      doc.querySelectorAll('script,#cloudOverlay,.uiModal').forEach(n=>n.remove());
+      doc.querySelectorAll('input').forEach(i=>{ if(i.type!=='file') i.setAttribute('value',i.value); });
+      const s=document.createElement('script'); s.textContent='window.addEventListener("load",()=>setTimeout(()=>window.print(),400));';
+      doc.querySelector('body').appendChild(s);
+      download('health-ledger-report-'+todayISO()+'.html','<!DOCTYPE html>\n'+doc.outerHTML);
+    },350);
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const pb=$('printBtn'); if(pb){ pb.textContent='Doctor-visit report (download & print)'; pb.onclick=printReport; }
+  });
+})();
+</script><script>
+/* ================= DEVICE SYNC THROUGH A FILE =================
+   No server. The ledger saves in this browser; a JSON "sync file" kept in iCloud
+   Drive (or any shared folder) carries it between devices.
+   Every top-level key and every day carries a modification time in S._mt.
+   Loading a file MERGES: newer wins per key/day; lists with ids are unioned;
+   inside a day, fields merge so a phone log and a Mac log of the same day both survive. */
+(function(){
+  const SYNC_NAME='health-ledger-sync.json';
+  const LAST_KEY=KEY+'.lastSyncSave';
+  let last=null, fh=null, autoTimer=null;
+  const hasFSA = typeof window.showSaveFilePicker==='function';
+
+  function docs(st){ const m={}; Object.keys(st).forEach(k=>{ if(k!=='days'&&k!=='_mt') m['k:'+k]=JSON.stringify(st[k]); });
+    Object.keys(st.days||{}).forEach(d=>{ m['d:'+d]=JSON.stringify(st.days[d]); }); return m; }
+  function stamp(){ const now=Date.now(), c=docs(S); S._mt=S._mt||{};
+    if(last) Object.keys(c).forEach(p=>{ if(c[p]!==last[p]) S._mt[p]=now; }); last=docs(S); }
+
+  const _load=load; load=function(){ _load(); if(!S._mt||typeof S._mt!=='object') S._mt={}; last=docs(S); };
+  const _save=save; save=function(){ stamp(); _save(); dirty(); if(fh) scheduleAuto(); };
+
+  /* ---- merge ---- */
+  const byId=a=>Array.isArray(a)&&a.length&&a.every(x=>x&&typeof x==='object'&&'id' in x);
+  function unionArr(newer,older){ if(!Array.isArray(newer)||!Array.isArray(older)) return newer;
+    if(byId(newer)||byId(older)){ const ids=new Set(newer.map(x=>x&&x.id)); return newer.concat(older.filter(x=>!(x&&ids.has(x.id)))); }
+    const seen=new Set(newer.map(x=>JSON.stringify(x))); return newer.concat(older.filter(x=>!seen.has(JSON.stringify(x)))); }
+  function mergeDay(newer,older){ const out=Object.assign({},older,newer);
+    Object.keys(out).forEach(k=>{ const a=newer[k], b=older[k];
+      if(Array.isArray(a)&&Array.isArray(b)) out[k]=unionArr(a,b);
+      else if(a&&b&&typeof a==='object'&&typeof b==='object'&&!Array.isArray(a)) out[k]=Object.assign({},b,a); });
+    return out; }
+  function merge(o){
+    if(!o||typeof o!=='object'||!o.days) throw new Error('not a Health Ledger file');
+    const mi=o._mt||{}, ml=S._mt||{}; let took=0, mixed=0;
+    Object.keys(docs(o)).forEach(p=>{ const key=p.slice(2), isDay=p[0]==='d';
+      const inc=isDay? o.days[key] : o[key]; const loc=isDay? S.days[key] : S[key];
+      const ti=mi[p]||0, tl=ml[p]||0;
+      if(loc===undefined){ if(isDay) S.days[key]=inc; else S[key]=inc; S._mt[p]=ti; took++; return; }
+      if(JSON.stringify(inc)===JSON.stringify(loc)) return;
+      let v;
+      if(isDay) v= ti>tl? mergeDay(inc,loc) : mergeDay(loc,inc);
+      else if(Array.isArray(inc)&&Array.isArray(loc)) v= ti>tl? unionArr(inc,loc) : unionArr(loc,inc);
+      else if(key==='settings') v= ti>tl? Object.assign({},loc,inc) : Object.assign({},inc,loc);
+      else v= ti>tl? inc : loc;
+      if(JSON.stringify(v)!==JSON.stringify(loc)){ if(isDay) S.days[key]=v; else S[key]=v; S._mt[p]=Math.max(ti,tl); mixed++; }
+    });
+    load_after_merge(); return took+mixed; }
+  function load_after_merge(){ localStorage.setItem(KEY,JSON.stringify(S)); load(); }
+
+  /* ---- status ---- */
+  function badge(kind,txt){ const b=$('syncBadge'); if(b){ b.className='sync '+kind; b.textContent=txt; b.title=txt+' (tap for sync options)'; } }
+  function lastSave(){ try{ return +localStorage.getItem(LAST_KEY)||0; }catch(e){ return 0; } }
+  function setLastSave(){ try{ localStorage.setItem(LAST_KEY,String(Date.now())); }catch(e){} }
+  function newestEdit(){ return Math.max(0,...Object.values(S._mt||{})); }
+  function dirty(){ if(fh){ badge('ok','Auto-sync on'); return; }
+    const ls=lastSave(), ne=newestEdit();
+    if(!ls) badge('local', Object.keys(S.days).length? 'Not synced yet' : 'On this device');
+    else if(ne>ls) badge('pending','Changes not in sync file');
+    else badge('ok','Sync file up to date'); }
+  function msg(t){ const m=$('syncMsg'); if(m) m.innerHTML=t; }
+
+  /* ---- manual save / load (Safari on Mac, iPhone, iPad) ---- */
+  async function saveFile(){
+    const text=JSON.stringify(S);
+    const file= typeof File==='function'? new File([text],SYNC_NAME,{type:'application/json'}) : null;
+    const mobile=/iPhone|iPad|iPod|Android/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    if(mobile&&file&&navigator.canShare&&navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:'Health Ledger sync file'}); setLastSave(); dirty();
+        msg('Saved. Choose <b>Save to Files › iCloud Drive › Health Ledger</b> if you have not already.'); return; }
+      catch(e){ if(e&&e.name==='AbortError') return; } }
+    download(SYNC_NAME,text,'application/json'); setLastSave(); dirty();
+    msg('Saved <b>'+SYNC_NAME+'</b> to your Downloads. Move it into iCloud Drive › Health Ledger, replacing the old copy (or set Safari › Settings › General › File download location to that folder once).');
+  }
+  function loadFile(f){ const rd=new FileReader();
+    rd.onload=()=>{ try{ const n=merge(JSON.parse(rd.result)); renderAll(); dirty();
+        msg(n? `Merged ✓ ${n} day(s) or section(s) updated from the sync file.` : 'Already up to date ✓'); }
+      catch(e){ msg('That file is not a Health Ledger sync file or backup.'); } };
+    rd.readAsText(f); }
+
+  /* ---- linked file (Chrome / Edge on Mac): automatic read, merge, write ---- */
+  const IDB='healthLedgerSync';
+  function idb(mode,fn){ return new Promise((res,rej)=>{ const r=indexedDB.open(IDB,1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('h'); r.onerror=()=>rej(r.error);
+    r.onsuccess=()=>{ const tx=r.result.transaction('h',mode); const st=tx.objectStore('h'); const q=fn(st);
+      tx.oncomplete=()=>res(q&&q.result); tx.onerror=()=>rej(tx.error); }; }); }
+  async function readLinked(){ if(!fh) return; try{ const f=await fh.getFile(); const t=await f.text(); if(t.trim()){ const n=merge(JSON.parse(t)); if(n) renderAll(); } }catch(e){} }
+  async function writeLinked(){ if(!fh) return; try{ await readLinked(); const w=await fh.createWritable(); await w.write(JSON.stringify(S)); await w.close(); setLastSave(); badge('ok','Auto-synced '+nowHM()); }
+    catch(e){ badge('err','Sync file not reachable'); } }
+  function scheduleAuto(){ clearTimeout(autoTimer); autoTimer=setTimeout(writeLinked,1500); }
+  async function link(){
+    try{ fh=await window.showSaveFilePicker({suggestedName:SYNC_NAME,types:[{description:'Health Ledger sync file',accept:{'application/json':['.json']}}]}); }
+    catch(e){ return; }
+    try{ await idb('readwrite',st=>st.put(fh,'file')); }catch(e){}
+    await writeLinked(); msg('Linked ✓ The ledger now reads and writes <b>'+esc(fh.name)+'</b> automatically while this tab is open.'); }
+  async function relink(){ try{ fh=await idb('readonly',st=>st.get('file')); }catch(e){ fh=null; }
+    if(!fh) return;
+    const p= fh.queryPermission? await fh.queryPermission({mode:'readwrite'}) : 'granted';
+    if(p==='granted'){ await readLinked(); dirty(); return; }
+    const h=fh; fh=null; const b=$('syncLink'); b.textContent='Reconnect sync file';
+    b.onclick=async()=>{ if((await h.requestPermission({mode:'readwrite'}))==='granted'){ fh=h; b.textContent='Link a different sync file'; b.onclick=link; await readLinked(); renderAll(); dirty(); } }; }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    $('syncSave').onclick=()=> fh? writeLinked().then(()=>msg('Synced ✓')) : saveFile();
+    $('syncLoadBtn').onclick=()=>$('syncFile').click();
+    $('syncFile').onchange=e=>{ const f=e.target.files[0]; if(f) loadFile(f); e.target.value=''; };
+    if(hasFSA){ $('syncLink').onclick=link; relink(); } else $('syncLink').style.display='none';
+    $('syncBadge').style.cursor='pointer';
+    $('syncBadge').onclick=()=>{ const b=document.querySelector('#tabs button[data-tab=data]'); if(b) b.click(); setTimeout(()=>$('syncCard').scrollIntoView({behavior:'smooth'}),60); };
+    document.addEventListener('visibilitychange',()=>{ if(!fh) return; if(document.visibilityState==='visible') readLinked().then(dirty); else writeLinked(); });
+    const cb=$('clearBtn');
+    if(cb) cb.onclick=async()=>{ const a=await uiPrompt('This erases all daily logs, exercise, notes and articles on this device. Recipes, medicines, the reading list and settings stay. Export a backup first if you might want them. Type ERASE to confirm.',{ok:'Erase',danger:true});
+      if(a!=='ERASE') return; const keep={settings:S.settings,recipes:S.recipes,reading:S.reading,medList:S.medList,_mt:{}};
+      S=JSON.parse(JSON.stringify(DEFAULTS)); Object.assign(S,keep); S.notes=[]; S.articles=[]; save(); renderAll(); };
+    dirty();
+  });
+  window.ledgerSync={merge,docs};
+})();
+</script>
+<script>
+/* ================= USER MEDICINES =================
+   The medicine list lives in S.medList: {id,name,dose,slot,from,to,purpose,how,caut}.
+   MEDS holds the entries active on the date being viewed, so adherence and the
+   14-day grid stay correct when a dose changes or a medicine stops. */
+(function(){
+  const SLOT={AM:'Morning',PM:'Evening'};
+  const list=()=> (S && Array.isArray(S.medList)) ? S.medList : [];
+  window.medsOn=function(s){ return list().filter(m=>(!m.from||s>=m.from)&&(!m.to||s<=m.to)); };
+  function syncMeds(){ MEDS.length=0; medsOn(cur).forEach(m=>MEDS.push(m)); }
+  function dateOf(d){ if(!d||!S||!S.days) return null; for(const k in S.days) if(S.days[k]===d) return k; return null; }
+  const newId=()=> 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  const lines=t=> String(t||'').split('\n').map(x=>x.trim()).filter(Boolean);
+
+  const _load=load; load=function(){ _load(); if(!Array.isArray(S.medList)) S.medList=[]; if(S.settings.caut==null) S.settings.caut=''; };
+
+  dosesTaken=function(d){ if(!d) return 0; const s=dateOf(d); const l=s?medsOn(s):MEDS;
+    return l.filter(m=>d.meds&&d.meds[m.id]&&d.meds[m.id].taken).length; };
+  adherence=function(d){ if(!d) return null; const s=dateOf(d); const n=(s?medsOn(s):MEDS).length; return n? dosesTaken(d)/n*100 : null; };
+
+  const _renderAll=renderAll; renderAll=function(){ syncMeds(); _renderAll(); renderGuide(); renderMedEditor(); };
+
+  const _renderMeds=renderMeds; renderMeds=function(){ syncMeds(); _renderMeds();
+    const empty='<p class="small muted">No medicines entered yet. Add them on the <b>Settings &amp; Data</b> tab.</p>';
+    if(!MEDS.some(m=>m.slot==='AM')) $('medsAM').innerHTML= list().length? '<p class="small muted">None in the morning.</p>' : empty;
+    if(!MEDS.some(m=>m.slot==='PM')) $('medsPM').innerHTML='<p class="small muted">None in the evening.</p>';
+    const g=$('medGrid'); const ds=[]; for(let i=13;i>=0;i--) ds.push(addDays(cur,-i));
+    const rows=[]; const seen=new Set();
+    list().forEach(m=>{ if(seen.has(m.id)) return; if(ds.some(s=>medsOn(s).some(x=>x.id===m.id))){ seen.add(m.id); rows.push(m); } });
+    let h='<tr><th>Medicine</th>'+ds.map(s=>`<th class="num">${parseISO(s).toLocaleDateString(undefined,{month:'numeric',day:'numeric'})}</th>`).join('')+'</tr>';
+    rows.forEach(m=>{ h+=`<tr><td>${esc(m.name)} <span class="small muted">${esc(m.dose)}</span></td>`+ds.map(s=>{
+        if(!medsOn(s).some(x=>x.id===m.id)) return '<td class="num muted" title="not on your list this date">–</td>';
+        const dd=peek(s); const t=dd&&dd.meds&&dd.meds[m.id]&&dd.meds[m.id].taken;
+        return `<td class="num" style="color:${t?'var(--good)':'var(--muted)'}" title="${t?'taken '+(dd.meds[m.id].time||''):'not logged'}">${t?'✓':'·'}</td>`; }).join('')+'</tr>'; });
+    g.innerHTML= rows.length? h : '<tr><td class="small muted">Nothing to show yet.</td></tr>';
+  };
+
+  /* Medicine Guide: built from the user's own notes */
+  renderGuide=function(){
+    const li=a=> a.length? '<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>' : '';
+    const gen=lines(S.settings.caut);
+    $('guideCross').innerHTML= gen.length? `<details open><summary>General cautions from your care team</summary><div class="body">${li(gen)}</div></details>`
+      : '<p class="small muted">Add general cautions from your care team (for example, pain relievers or cold medicines to avoid) on the Settings &amp; Data tab.</p>';
+    const act=medsOn(todayISO());
+    $('guideMeds').innerHTML= act.length? act.map(m=>`<details><summary>${esc(m.name)} <span>· ${esc(m.dose)} · ${SLOT[m.slot]||''}</span></summary><div class="body">
+      ${m.purpose?`<p><b>What it is for.</b> ${esc(m.purpose)}</p>`:''}${m.how?`<p><b>How to take it.</b> ${esc(m.how)}</p>`:''}
+      ${lines(m.caut).length?'<h4>Cautions</h4>'+li(lines(m.caut)):''}
+      ${!m.purpose&&!m.how&&!lines(m.caut).length?'<p class="small muted">No notes yet. Ask your pharmacist what this medicine is for and what to watch for, then add it on the Settings &amp; Data tab.</p>':''}
+      <p class="small"><a href="https://medlineplus.gov/druginformation.html" rel="noopener" target="_blank">Look it up on MedlinePlus</a> · <a href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=${encodeURIComponent(m.name)}" rel="noopener" target="_blank">DailyMed label</a></p>
+      </div></details>`).join('') : '<p class="small muted">Your medicines will appear here once you add them.</p>';
+  };
+
+  /* Settings: editor */
+  function fill(m){ $('medId').value=m?m.id:''; $('medName').value=m?m.name:''; $('medDose').value=m?m.dose:'';
+    $('medSlot').value=m?m.slot:'AM'; $('medFrom').value=(m&&m.from)||todayISO();
+    $('medPurpose').value=m?m.purpose||'':''; $('medHow').value=m?m.how||'':''; $('medCaut').value=m?m.caut||'':'';
+    $('medFormTitle').textContent=m&&m.id?'Edit medicine':'Add a medicine'; }
+  function renderMedEditor(){ const t=$('medTable'); if(!t) return;
+    const today=todayISO(); const rows=list().slice().sort((a,b)=>((a.to&&a.to<today)?1:0)-((b.to&&b.to<today)?1:0)||(a.slot===b.slot?0:(a.slot==='AM'?-1:1))||a.name.localeCompare(b.name)||String(a.from||'').localeCompare(String(b.from||'')));
+    t.innerHTML= rows.length? '<tr><th>Medicine</th><th>Dose</th><th>When</th><th>Dates</th><th></th></tr>'+rows.map(m=>{ const done=m.to&&m.to<today;
+      return `<tr class="${done?'muted':''}"><td>${esc(m.name)}</td><td>${esc(m.dose)}</td><td>${SLOT[m.slot]||''}</td>
+      <td class="small">${m.from?fmtDate(m.from,{month:'short',day:'numeric',year:'numeric'}):'—'} → ${m.to?fmtDate(m.to,{month:'short',day:'numeric',year:'numeric'}):'now'}</td>
+      <td style="white-space:nowrap">${done?'':`<button class="btn ghost sm" data-medit="${m.id}">Edit</button> <button class="btn ghost sm" data-mchg="${m.id}">Change dose</button> <button class="btn ghost sm" data-mstop="${m.id}">Stop</button> `}<button class="x" data-mdel="${m.id}" title="Delete">×</button></td></tr>`; }).join('')
+      : '<tr><td class="small muted">No medicines yet. Add the first one below.</td></tr>';
+    if(document.activeElement!==$('setCaut')) $('setCaut').value=S.settings.caut||''; }
+  window.renderMedEditor=renderMedEditor;
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    fill(null);
+    $('medSave').onclick=()=>{ const name=$('medName').value.trim(); if(!name){ $('medMsg').textContent='Enter a medicine name.'; return; }
+      const id=$('medId').value; const rec={name,dose:$('medDose').value.trim(),slot:$('medSlot').value,from:$('medFrom').value||todayISO(),
+        purpose:$('medPurpose').value.trim(),how:$('medHow').value.trim(),caut:$('medCaut').value};
+      if(id){ const m=list().find(x=>x.id===id); if(m) Object.assign(m,rec); } else S.medList.push(Object.assign({id:newId()},rec));
+      save(); fill(null); $('medMsg').textContent='Saved ✓'; setTimeout(()=>$('medMsg').textContent='',1500); renderAll(); };
+    $('medClear').onclick=()=>fill(null);
+    $('saveCaut').onclick=()=>{ S.settings.caut=$('setCaut').value; save(); $('cautMsg').textContent='Saved ✓'; setTimeout(()=>$('cautMsg').textContent='',1500); renderGuide(); };
+    $('medTable').addEventListener('click',async e=>{ const b=e.target.closest('button'); if(!b) return; const ds=b.dataset;
+      const id=ds.medit||ds.mchg||ds.mstop||ds.mdel; const m=list().find(x=>x.id===id); if(!m) return;
+      if(ds.medit){ fill(m); $('medName').focus(); return; }
+      if(ds.mchg){ const today=todayISO(); if(m.from&&m.from>=today){ fill(m); $('medFormTitle').textContent='Edit dose (started today)'; $('medDose').focus(); return; }
+        m.to=addDays(today,-1);
+        const copy=Object.assign({},m,{id:'',from:today}); delete copy.to; save(); fill(copy); $('medFormTitle').textContent='New dose for '+m.name+' (starts today)';
+        $('medDose').focus(); renderAll(); return; }
+      if(ds.mstop){ const v=await uiPrompt('Last day you took '+m.name+' (YYYY-MM-DD):',{ok:'Stop',value:todayISO()}); if(v==null) return;
+        const d=/^\d{4}-\d{2}-\d{2}$/.test(v.trim())? v.trim() : todayISO(); m.to=d; save(); renderAll(); return; }
+      if(ds.mdel){ const ok=await uiConfirm('Delete '+m.name+' completely? Its check marks disappear from your history. Use Stop instead if you simply no longer take it.',{ok:'Delete',danger:true});
+        if(ok){ S.medList=S.medList.filter(x=>x.id!==id); save(); renderAll(); } }
+    });
+  });
+})();
+</script><script>
+/* ================= FIRST-RUN SETUP, NAME, OFFLINE APP ================= */
+(function(){
+  const _load=load; load=function(){ _load(); if(S.settings.owner==null) S.settings.owner=''; };
+  function brand(){ const b=document.querySelector('.brand'); if(!b) return;
+    let n=b.querySelector('.owner'); if(!n){ n=document.createElement('span'); n.className='owner'; b.insertBefore(n,b.querySelector('small')); }
+    n.textContent= S.settings.owner? ' · '+S.settings.owner : ''; }
+  const _renderAll=renderAll; renderAll=function(){ _renderAll(); brand(); const o=$('setOwner'); if(o&&document.activeElement!==o) o.value=S.settings.owner||''; };
+
+  function welcome(){
+    const w=document.createElement('div'); w.className='uiModal'; w.id='welcome'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
+    w.innerHTML=`<div class="uiBox" style="max-width:560px">
+      <h2 style="margin-top:0">Welcome to the Daily Health Ledger</h2>
+      <p>A private log for weight, blood pressure, oxygen, medicines, fluids, food and exercise, with charts and a report you can print for appointments.</p>
+      <div class="note" style="margin:10px 0"><b>Please read.</b> This is a personal record-keeping tool. It is <b>not a medical device</b> and does not give medical advice, diagnose, or treat anything. Alert thresholds are reminders, not clinical judgments. Follow your care team's instructions. <b>In an emergency, call 911.</b></div>
+      <p class="small">Your data stays in this browser on this device. Nothing is sent to the developer or any server. To use more than one device, see <i>Sync</i> on the Settings &amp; Data tab.</p>
+      <div class="row"><div><label for="wName">Your name (optional)</label><input id="wName" autocomplete="name"></div>
+      <div><label for="wUnit">Weight unit</label><select id="wUnit"><option value="lb">lb</option><option value="kg">kg</option></select></div></div>
+      <div class="uiBtns" style="margin-top:14px"><button class="btn ghost" id="wSample">Explore with sample data</button><button class="btn" id="wGo">I understand: set up my medicines</button></div></div>`;
+    document.body.appendChild(w);
+    $('wUnit').value=S.settings.wUnit||'lb';
+    const done=()=>{ S.settings.owner=$('wName').value.trim(); S.settings.wUnit=$('wUnit').value; S.settings.setupDone=new Date().toISOString(); w.remove(); };
+    $('wGo').onclick=()=>{ done(); save(); renderAll(); const b=document.querySelector('#tabs button[data-tab=data]'); if(b) b.click();
+      setTimeout(()=>{ $('medEditor').scrollIntoView({behavior:'smooth'}); $('medName').focus(); },80); };
+    $('wSample').onclick=()=>{ done(); if(!S.medList.length) S.medList=[
+        {id:'demo1',name:'Sample medicine A',dose:'10 mg tablet',slot:'AM',from:addDays(todayISO(),-44),purpose:'Example entry. Delete it on the Settings tab.',how:'',caut:''},
+        {id:'demo2',name:'Sample medicine B',dose:'20 mg tablet',slot:'PM',from:addDays(todayISO(),-44),purpose:'Example entry.',how:'',caut:''}];
+      MEDS.length=0; medsOn(todayISO()).forEach(m=>MEDS.push(m)); makeDemo(); save(); renderAll(); };
+    setTimeout(()=>$('wName').focus(),30);
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    const ss=$('saveSettings'); if(ss) ss.addEventListener('click',()=>{ S.settings.owner=$('setOwner').value.trim(); save(); brand(); });
+    if(!S.settings.setupDone) welcome();
+    brand();
+    if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+})();
+</script></body>
+</html>

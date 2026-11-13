@@ -1,0 +1,6 @@
+.DS_Store
+dist/
+*.zip
+# never commit personal data
+health-ledger-sync*.json
+health-ledger-backup*.json
