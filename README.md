@@ -2,7 +2,7 @@
 
 A private, free daily log for **weight, blood pressure, pulse, oxygen (SpO₂), medicines, fluids, food and exercise**, with trend charts and a report you can print for appointments. It runs on **Mac, iPhone and iPad** as an installable web app, and your data never leaves your devices.
 
-**Open the app:** https://OWNER.github.io/health-ledger/
+**Open the app:** https://econmatrix007.github.io/health-ledger/
 
 > **Not medical advice.** This is a personal record-keeping tool, not a medical device. It does not diagnose or treat anything, and alert thresholds are reminders, not clinical judgments. Follow your care team's instructions. In an emergency, call 911. See [DISCLAIMER.md](DISCLAIMER.md).
 
@@ -49,8 +49,8 @@ A one-page brief is in [docs/clinician-brief.pdf](docs/clinician-brief.pdf). Pat
 
 ## Download the code
 
-* **Latest release:** [Releases](https://github.com/OWNER/health-ledger/releases) has a ZIP of the app. Unzip it and serve the `app` folder from any static web host.
-* **Clone:** `git clone https://github.com/OWNER/health-ledger.git`
+* **Latest release:** [Releases](https://github.com/econmatrix007/health-ledger/releases) has a ZIP of the app. Unzip it and serve the `app` folder from any static web host.
+* **Clone:** `git clone https://github.com/econmatrix007/health-ledger.git`
 
 The app is one HTML file (`app/index.html`) with no build step and no dependencies. To run it locally on a Mac:
 
@@ -62,7 +62,7 @@ python3 -m http.server 8000
 
 ## Support the project
 
-The Daily Health Ledger is free and always will be. If it helps you, you can [sponsor it on GitHub](https://github.com/sponsors/OWNER). Donations are gifts to the developer: they are **not tax-deductible** and do not buy support, features, or medical services.
+The Daily Health Ledger is free and always will be. If it helps you, you can [sponsor it on GitHub](https://github.com/sponsors/econmatrix007). Donations are gifts to the developer: they are **not tax-deductible** and do not buy support, features, or medical services.
 
 ## License
 
