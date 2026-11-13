@@ -3,7 +3,7 @@ const fs = require('fs');
 const d = require('docx');
 const BLUE = '00356B', OX = '800020', MUTED = '5A5A5A', TINT = 'E8EEF6', PAPER = 'FAF7F0';
 const FONT = 'Georgia';
-const APP_URL = process.env.APP_URL || 'https://OWNER.github.io/health-ledger/';
+const APP_URL = process.env.APP_URL || 'https://econmatrix007.github.io/health-ledger/';
 const W = 12240 - 2 * 1260; // content width in DXA (0.875" margins)
 
 const styles = {

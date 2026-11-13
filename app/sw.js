@@ -1,7 +1,7 @@
 /* Daily Health Ledger service worker: lets the installed app open with no connection.
    It caches only the app's own files. It never sees or stores health data,
    which lives in the browser's local storage on the device. Bump VERSION on every release. */
-const VERSION = 'health-ledger-v1.0.0';
+const VERSION = 'health-ledger-v1.0.1';
 const FILES = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png',

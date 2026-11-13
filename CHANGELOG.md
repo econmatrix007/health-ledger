@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1 (2026-11)
+* Docs regenerated with the live app link; docs generator defaults to the live URL.
+
 ## 1.0.0 (2026-11)
 First public release, generalized from a personal tracker.
 * User-entered medicine list with start/stop dates and dose changes that preserve history
